@@ -1,4 +1,4 @@
-library core;
+library timefull_core;
 
 export 'service.dart';
 export 'dart:async';
