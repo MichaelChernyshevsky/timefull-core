@@ -3,7 +3,8 @@
 library;
 
 import 'dart:io';
-import 'package:core/core.dart';
+import 'package:timefullcore/core.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 
 const String _email = 'admin@server.com';
@@ -27,14 +28,14 @@ void main() {
     });
 
     test("- user", () async {
-      final user = await userRepo.user;
-      userId = user!.id;
+      final user = userRepo.user;
+      userId = user.id.toString();
     });
 
     test("-  edit", () async {
       final resp = await userRepo.editUser(userId: userRepo.userId, sex: '', name: '', phone: '', age: 21, name2: '');
       expect(resp, true);
-      await userRepo.user;
+      userRepo.user;
     });
   });
 }

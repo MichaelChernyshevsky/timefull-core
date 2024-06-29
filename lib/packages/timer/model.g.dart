@@ -27,14 +27,14 @@ const TimerModelSchema = CollectionSchema(
       name: r'relaxSave',
       type: IsarType.long,
     ),
-    r'timeRelaxSave': PropertySchema(
+    r'timeRelax': PropertySchema(
       id: 2,
-      name: r'timeRelaxSave',
+      name: r'timeRelax',
       type: IsarType.long,
     ),
-    r'timeStat': PropertySchema(
+    r'timeRelaxSave': PropertySchema(
       id: 3,
-      name: r'timeStat',
+      name: r'timeRelaxSave',
       type: IsarType.long,
     ),
     r'timeWork': PropertySchema(
@@ -95,8 +95,8 @@ void _timerModelSerialize(
 ) {
   writer.writeLong(offsets[0], object.relax);
   writer.writeLong(offsets[1], object.relaxSave);
-  writer.writeLong(offsets[2], object.timeRelaxSave);
-  writer.writeLong(offsets[3], object.timeRelax);
+  writer.writeLong(offsets[2], object.timeRelax);
+  writer.writeLong(offsets[3], object.timeRelaxSave);
   writer.writeLong(offsets[4], object.timeWork);
   writer.writeLong(offsets[5], object.timeWorkSave);
   writer.writeString(offsets[6], object.userId);
@@ -113,13 +113,13 @@ TimerModel _timerModelDeserialize(
   final object = TimerModel(
     id: id,
     relax: reader.readLong(offsets[0]),
-    timeRelax: reader.readLong(offsets[3]),
+    timeRelax: reader.readLong(offsets[2]),
     timeWork: reader.readLong(offsets[4]),
     userId: reader.readString(offsets[6]),
     work: reader.readLong(offsets[7]),
   );
   object.relaxSave = reader.readLong(offsets[1]);
-  object.timeRelaxSave = reader.readLong(offsets[2]);
+  object.timeRelaxSave = reader.readLong(offsets[3]);
   object.timeWorkSave = reader.readLong(offsets[5]);
   object.workSave = reader.readLong(offsets[8]);
   return object;
@@ -165,7 +165,8 @@ List<IsarLinkBase<dynamic>> _timerModelGetLinks(TimerModel object) {
 
 void _timerModelAttach(IsarCollection<dynamic> col, Id id, TimerModel object) {}
 
-extension TimerModelQueryWhereSort on QueryBuilder<TimerModel, TimerModel, QWhere> {
+extension TimerModelQueryWhereSort
+    on QueryBuilder<TimerModel, TimerModel, QWhere> {
   QueryBuilder<TimerModel, TimerModel, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -173,7 +174,8 @@ extension TimerModelQueryWhereSort on QueryBuilder<TimerModel, TimerModel, QWher
   }
 }
 
-extension TimerModelQueryWhere on QueryBuilder<TimerModel, TimerModel, QWhereClause> {
+extension TimerModelQueryWhere
+    on QueryBuilder<TimerModel, TimerModel, QWhereClause> {
   QueryBuilder<TimerModel, TimerModel, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
@@ -205,7 +207,8 @@ extension TimerModelQueryWhere on QueryBuilder<TimerModel, TimerModel, QWhereCla
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<TimerModel, TimerModel, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -213,7 +216,8 @@ extension TimerModelQueryWhere on QueryBuilder<TimerModel, TimerModel, QWhereCla
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<TimerModel, TimerModel, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -238,8 +242,10 @@ extension TimerModelQueryWhere on QueryBuilder<TimerModel, TimerModel, QWhereCla
   }
 }
 
-extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterCondition> {
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> idEqualTo(Id value) {
+extension TimerModelQueryFilter
+    on QueryBuilder<TimerModel, TimerModel, QFilterCondition> {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -291,7 +297,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> relaxEqualTo(int value) {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> relaxEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'relax',
@@ -343,7 +350,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> relaxSaveEqualTo(int value) {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> relaxSaveEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'relaxSave',
@@ -352,7 +360,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> relaxSaveGreaterThan(
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      relaxSaveGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -395,7 +404,62 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeRelaxSaveEqualTo(int value) {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeRelaxEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'timeRelax',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeRelaxGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'timeRelax',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeRelaxLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'timeRelax',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeRelaxBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'timeRelax',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeRelaxSaveEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'timeRelaxSave',
@@ -404,7 +468,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeRelaxSaveGreaterThan(
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeRelaxSaveGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -417,7 +482,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeRelaxSaveLessThan(
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeRelaxSaveLessThan(
     int value, {
     bool include = false,
   }) {
@@ -430,7 +496,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeRelaxSaveBetween(
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeRelaxSaveBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -447,59 +514,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeStatEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'timeStat',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeStatGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'timeStat',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeStatLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'timeStat',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeStatBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'timeStat',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeWorkEqualTo(int value) {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeWorkEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'timeWork',
@@ -508,7 +524,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeWorkGreaterThan(
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeWorkGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -551,7 +568,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeWorkSaveEqualTo(int value) {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeWorkSaveEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'timeWorkSave',
@@ -560,7 +578,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeWorkSaveGreaterThan(
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeWorkSaveGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -573,7 +592,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeWorkSaveLessThan(
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeWorkSaveLessThan(
     int value, {
     bool include = false,
   }) {
@@ -586,7 +606,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> timeWorkSaveBetween(
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      timeWorkSaveBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -691,7 +712,9 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> userIdContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> userIdContains(
+      String value,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'userId',
@@ -701,7 +724,9 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> userIdMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> userIdMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'userId',
@@ -720,7 +745,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> userIdIsNotEmpty() {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      userIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'userId',
@@ -729,7 +755,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> workEqualTo(int value) {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> workEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'work',
@@ -781,7 +808,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> workSaveEqualTo(int value) {
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> workSaveEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'workSave',
@@ -790,7 +818,8 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition> workSaveGreaterThan(
+  QueryBuilder<TimerModel, TimerModel, QAfterFilterCondition>
+      workSaveGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -834,11 +863,14 @@ extension TimerModelQueryFilter on QueryBuilder<TimerModel, TimerModel, QFilterC
   }
 }
 
-extension TimerModelQueryObject on QueryBuilder<TimerModel, TimerModel, QFilterCondition> {}
+extension TimerModelQueryObject
+    on QueryBuilder<TimerModel, TimerModel, QFilterCondition> {}
 
-extension TimerModelQueryLinks on QueryBuilder<TimerModel, TimerModel, QFilterCondition> {}
+extension TimerModelQueryLinks
+    on QueryBuilder<TimerModel, TimerModel, QFilterCondition> {}
 
-extension TimerModelQuerySortBy on QueryBuilder<TimerModel, TimerModel, QSortBy> {
+extension TimerModelQuerySortBy
+    on QueryBuilder<TimerModel, TimerModel, QSortBy> {
   QueryBuilder<TimerModel, TimerModel, QAfterSortBy> sortByRelax() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'relax', Sort.asc);
@@ -863,6 +895,18 @@ extension TimerModelQuerySortBy on QueryBuilder<TimerModel, TimerModel, QSortBy>
     });
   }
 
+  QueryBuilder<TimerModel, TimerModel, QAfterSortBy> sortByTimeRelax() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeRelax', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TimerModel, TimerModel, QAfterSortBy> sortByTimeRelaxDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeRelax', Sort.desc);
+    });
+  }
+
   QueryBuilder<TimerModel, TimerModel, QAfterSortBy> sortByTimeRelaxSave() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'timeRelaxSave', Sort.asc);
@@ -872,18 +916,6 @@ extension TimerModelQuerySortBy on QueryBuilder<TimerModel, TimerModel, QSortBy>
   QueryBuilder<TimerModel, TimerModel, QAfterSortBy> sortByTimeRelaxSaveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'timeRelaxSave', Sort.desc);
-    });
-  }
-
-  QueryBuilder<TimerModel, TimerModel, QAfterSortBy> sortByTimeStat() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timeStat', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TimerModel, TimerModel, QAfterSortBy> sortByTimeStatDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timeStat', Sort.desc);
     });
   }
 
@@ -948,7 +980,8 @@ extension TimerModelQuerySortBy on QueryBuilder<TimerModel, TimerModel, QSortBy>
   }
 }
 
-extension TimerModelQuerySortThenBy on QueryBuilder<TimerModel, TimerModel, QSortThenBy> {
+extension TimerModelQuerySortThenBy
+    on QueryBuilder<TimerModel, TimerModel, QSortThenBy> {
   QueryBuilder<TimerModel, TimerModel, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -985,6 +1018,18 @@ extension TimerModelQuerySortThenBy on QueryBuilder<TimerModel, TimerModel, QSor
     });
   }
 
+  QueryBuilder<TimerModel, TimerModel, QAfterSortBy> thenByTimeRelax() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeRelax', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TimerModel, TimerModel, QAfterSortBy> thenByTimeRelaxDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeRelax', Sort.desc);
+    });
+  }
+
   QueryBuilder<TimerModel, TimerModel, QAfterSortBy> thenByTimeRelaxSave() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'timeRelaxSave', Sort.asc);
@@ -994,18 +1039,6 @@ extension TimerModelQuerySortThenBy on QueryBuilder<TimerModel, TimerModel, QSor
   QueryBuilder<TimerModel, TimerModel, QAfterSortBy> thenByTimeRelaxSaveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'timeRelaxSave', Sort.desc);
-    });
-  }
-
-  QueryBuilder<TimerModel, TimerModel, QAfterSortBy> thenByTimeStat() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timeStat', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TimerModel, TimerModel, QAfterSortBy> thenByTimeStatDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'timeStat', Sort.desc);
     });
   }
 
@@ -1070,7 +1103,8 @@ extension TimerModelQuerySortThenBy on QueryBuilder<TimerModel, TimerModel, QSor
   }
 }
 
-extension TimerModelQueryWhereDistinct on QueryBuilder<TimerModel, TimerModel, QDistinct> {
+extension TimerModelQueryWhereDistinct
+    on QueryBuilder<TimerModel, TimerModel, QDistinct> {
   QueryBuilder<TimerModel, TimerModel, QDistinct> distinctByRelax() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'relax');
@@ -1083,15 +1117,15 @@ extension TimerModelQueryWhereDistinct on QueryBuilder<TimerModel, TimerModel, Q
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QDistinct> distinctByTimeRelaxSave() {
+  QueryBuilder<TimerModel, TimerModel, QDistinct> distinctByTimeRelax() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'timeRelaxSave');
+      return query.addDistinctBy(r'timeRelax');
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QDistinct> distinctByTimeStat() {
+  QueryBuilder<TimerModel, TimerModel, QDistinct> distinctByTimeRelaxSave() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'timeStat');
+      return query.addDistinctBy(r'timeRelaxSave');
     });
   }
 
@@ -1107,7 +1141,8 @@ extension TimerModelQueryWhereDistinct on QueryBuilder<TimerModel, TimerModel, Q
     });
   }
 
-  QueryBuilder<TimerModel, TimerModel, QDistinct> distinctByUserId({bool caseSensitive = true}) {
+  QueryBuilder<TimerModel, TimerModel, QDistinct> distinctByUserId(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'userId', caseSensitive: caseSensitive);
     });
@@ -1126,7 +1161,8 @@ extension TimerModelQueryWhereDistinct on QueryBuilder<TimerModel, TimerModel, Q
   }
 }
 
-extension TimerModelQueryProperty on QueryBuilder<TimerModel, TimerModel, QQueryProperty> {
+extension TimerModelQueryProperty
+    on QueryBuilder<TimerModel, TimerModel, QQueryProperty> {
   QueryBuilder<TimerModel, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -1145,15 +1181,15 @@ extension TimerModelQueryProperty on QueryBuilder<TimerModel, TimerModel, QQuery
     });
   }
 
-  QueryBuilder<TimerModel, int, QQueryOperations> timeRelaxSaveProperty() {
+  QueryBuilder<TimerModel, int, QQueryOperations> timeRelaxProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'timeRelaxSave');
+      return query.addPropertyName(r'timeRelax');
     });
   }
 
-  QueryBuilder<TimerModel, int, QQueryOperations> timeStatProperty() {
+  QueryBuilder<TimerModel, int, QQueryOperations> timeRelaxSaveProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'timeStat');
+      return query.addPropertyName(r'timeRelaxSave');
     });
   }
 

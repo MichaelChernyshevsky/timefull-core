@@ -1,4 +1,4 @@
-import 'package:core/core.dart';
+import 'package:timefullcore/core.dart';
 
 String fromEnumToString(PackageType type) {
   switch (type) {

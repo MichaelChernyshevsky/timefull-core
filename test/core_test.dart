@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:core/core.dart';
+import 'package:timefullcore/core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const String _email = 'admin@server.com';
@@ -25,7 +25,7 @@ void main() {
 
   group('Core ', () {
     test("- initialize", () async {
-      coreService.initialize(location: await testDirectory);
+      coreService.initialize(location: await testDirectory, shema: true);
     });
 
     test("- signin", () async {

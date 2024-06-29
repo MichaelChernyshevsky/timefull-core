@@ -3,7 +3,8 @@
 library;
 
 import 'dart:io';
-import 'package:core/core.dart';
+import 'package:timefullcore/core.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 
 const String _email = 'admin@server.com';
@@ -30,8 +31,8 @@ void main() {
       expect(userRepo.loggined, true);
     });
     test("- user", () async {
-      final user = await userRepo.user;
-      userId = user!.id;
+      final user = userRepo.user;
+      userId = user.id.toString();
     });
   });
   group('Package Api', () {

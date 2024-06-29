@@ -1,12 +1,16 @@
+import 'package:isar/isar.dart';
+part 'model.g.dart';
+
 enum PackageType {
   economy,
   timer,
   task,
 }
 
+@collection
 class Packages {
   final String userId;
-  final int id;
+  final Id id;
 
   final bool? economy;
   final bool? tasks;

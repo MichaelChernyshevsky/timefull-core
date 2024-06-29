@@ -29,7 +29,6 @@ class EconomyRepository extends Repository implements EconomyInterface {
       "title": title,
       "description": description,
     });
-    print(resp.message);
     return getStat(resp.message);
   }
 

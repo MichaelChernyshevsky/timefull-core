@@ -3,7 +3,7 @@ import 'model.dart';
 abstract class UserInterface {
   bool get loggined;
   String get userId;
-  Future<UserModel?> get user;
+  Future<UserModel?> get userGet;
 
   void signIn({required String email, required String password}) {}
   void signUp({required String email, required String password}) {}
