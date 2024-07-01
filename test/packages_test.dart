@@ -37,20 +37,20 @@ void main() {
   });
   group('Package Api', () {
     test("-  get", () async {
-      final resp = await packageRepo.getPackages(userId: userId);
+      final resp = await packageRepo.getPackagesApi(userId: userId);
       expect(resp.userId, userRepo.userId);
     });
 
     test("-  change", () async {
-      expect(await packageRepo.changePackage(type: PackageType.task, userId: userId), true);
+      expect(await packageRepo.changePackageApi(type: PackageType.task, userId: userId), true);
     });
     test("-  get", () async {
-      final Packages resp = await packageRepo.getPackages(userId: userId);
+      final Packages resp = await packageRepo.getPackagesApi(userId: userId);
       print(resp.serialize());
     });
 
     test("-  info", () async {
-      expect((await packageRepo.infoPackages()).packagees.isNotEmpty, true);
+      expect((await packageRepo.infoPackagesApi()).packagees.isNotEmpty, true);
     });
   });
 }

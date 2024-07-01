@@ -22,9 +22,9 @@ const PackagesSchema = CollectionSchema(
       name: r'economy',
       type: IsarType.bool,
     ),
-    r'tasks': PropertySchema(
+    r'task': PropertySchema(
       id: 1,
-      name: r'tasks',
+      name: r'task',
       type: IsarType.bool,
     ),
     r'timer': PropertySchema(
@@ -69,7 +69,7 @@ void _packagesSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeBool(offsets[0], object.economy);
-  writer.writeBool(offsets[1], object.tasks);
+  writer.writeBool(offsets[1], object.task);
   writer.writeBool(offsets[2], object.timer);
   writer.writeString(offsets[3], object.userId);
 }
@@ -81,10 +81,10 @@ Packages _packagesDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Packages(
-    economy: reader.readBoolOrNull(offsets[0]),
+    economy: reader.readBool(offsets[0]),
     id: id,
-    tasks: reader.readBoolOrNull(offsets[1]),
-    timer: reader.readBoolOrNull(offsets[2]),
+    task: reader.readBool(offsets[1]),
+    timer: reader.readBool(offsets[2]),
     userId: reader.readString(offsets[3]),
   );
   return object;
@@ -98,11 +98,11 @@ P _packagesDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 1:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     default:
@@ -118,7 +118,9 @@ List<IsarLinkBase<dynamic>> _packagesGetLinks(Packages object) {
   return [];
 }
 
-void _packagesAttach(IsarCollection<dynamic> col, Id id, Packages object) {}
+void _packagesAttach(IsarCollection<dynamic> col, Id id, Packages object) {
+  object.id = id;
+}
 
 extension PackagesQueryWhereSort on QueryBuilder<Packages, Packages, QWhere> {
   QueryBuilder<Packages, Packages, QAfterWhere> anyId() {
@@ -197,24 +199,8 @@ extension PackagesQueryWhere on QueryBuilder<Packages, Packages, QWhereClause> {
 
 extension PackagesQueryFilter
     on QueryBuilder<Packages, Packages, QFilterCondition> {
-  QueryBuilder<Packages, Packages, QAfterFilterCondition> economyIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'economy',
-      ));
-    });
-  }
-
-  QueryBuilder<Packages, Packages, QAfterFilterCondition> economyIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'economy',
-      ));
-    });
-  }
-
   QueryBuilder<Packages, Packages, QAfterFilterCondition> economyEqualTo(
-      bool? value) {
+      bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'economy',
@@ -275,50 +261,18 @@ extension PackagesQueryFilter
     });
   }
 
-  QueryBuilder<Packages, Packages, QAfterFilterCondition> tasksIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'tasks',
-      ));
-    });
-  }
-
-  QueryBuilder<Packages, Packages, QAfterFilterCondition> tasksIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'tasks',
-      ));
-    });
-  }
-
-  QueryBuilder<Packages, Packages, QAfterFilterCondition> tasksEqualTo(
-      bool? value) {
+  QueryBuilder<Packages, Packages, QAfterFilterCondition> taskEqualTo(
+      bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tasks',
+        property: r'task',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Packages, Packages, QAfterFilterCondition> timerIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'timer',
-      ));
-    });
-  }
-
-  QueryBuilder<Packages, Packages, QAfterFilterCondition> timerIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'timer',
-      ));
-    });
-  }
-
   QueryBuilder<Packages, Packages, QAfterFilterCondition> timerEqualTo(
-      bool? value) {
+      bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'timer',
@@ -477,15 +431,15 @@ extension PackagesQuerySortBy on QueryBuilder<Packages, Packages, QSortBy> {
     });
   }
 
-  QueryBuilder<Packages, Packages, QAfterSortBy> sortByTasks() {
+  QueryBuilder<Packages, Packages, QAfterSortBy> sortByTask() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tasks', Sort.asc);
+      return query.addSortBy(r'task', Sort.asc);
     });
   }
 
-  QueryBuilder<Packages, Packages, QAfterSortBy> sortByTasksDesc() {
+  QueryBuilder<Packages, Packages, QAfterSortBy> sortByTaskDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tasks', Sort.desc);
+      return query.addSortBy(r'task', Sort.desc);
     });
   }
 
@@ -540,15 +494,15 @@ extension PackagesQuerySortThenBy
     });
   }
 
-  QueryBuilder<Packages, Packages, QAfterSortBy> thenByTasks() {
+  QueryBuilder<Packages, Packages, QAfterSortBy> thenByTask() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tasks', Sort.asc);
+      return query.addSortBy(r'task', Sort.asc);
     });
   }
 
-  QueryBuilder<Packages, Packages, QAfterSortBy> thenByTasksDesc() {
+  QueryBuilder<Packages, Packages, QAfterSortBy> thenByTaskDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'tasks', Sort.desc);
+      return query.addSortBy(r'task', Sort.desc);
     });
   }
 
@@ -585,9 +539,9 @@ extension PackagesQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Packages, Packages, QDistinct> distinctByTasks() {
+  QueryBuilder<Packages, Packages, QDistinct> distinctByTask() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'tasks');
+      return query.addDistinctBy(r'task');
     });
   }
 
@@ -613,19 +567,19 @@ extension PackagesQueryProperty
     });
   }
 
-  QueryBuilder<Packages, bool?, QQueryOperations> economyProperty() {
+  QueryBuilder<Packages, bool, QQueryOperations> economyProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'economy');
     });
   }
 
-  QueryBuilder<Packages, bool?, QQueryOperations> tasksProperty() {
+  QueryBuilder<Packages, bool, QQueryOperations> taskProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'tasks');
+      return query.addPropertyName(r'task');
     });
   }
 
-  QueryBuilder<Packages, bool?, QQueryOperations> timerProperty() {
+  QueryBuilder<Packages, bool, QQueryOperations> timerProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'timer');
     });

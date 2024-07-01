@@ -11,14 +11,16 @@ class PackagesRepository extends Repository implements PackagesInterface {
     _isar = isar;
     final packageDB = await _isar.packages.where().findFirst();
     if (packageDB == null) {
-      await _isar.writeTxn(() async => _isar.packages.put(Packages(economy: false, id: 1, tasks: false, timer: false, userId: userId)));
+      final form = Packages(economy: false, id: 1, task: false, timer: false, userId: userId);
+      await _isar.writeTxn(() async => _isar.packages.put(form));
+      packages = form;
     } else {
       packages = packageDB;
     }
   }
 
   @override
-  Future<bool> changePackage({required PackageType type, required String userId}) async {
+  Future<bool> changePackageApi({required PackageType type, required String userId}) async {
     final BaseResponse resp = await httpService.post(
       changePackageUri,
       data: {"userId": userId, "package": fromEnumToString(type)},
@@ -27,7 +29,7 @@ class PackagesRepository extends Repository implements PackagesInterface {
   }
 
   @override
-  Future<Packages> getPackages({required String userId}) async {
+  Future<Packages> getPackagesApi({required String userId}) async {
     final BaseResponse resp = await httpService.post(
       getPackageUri,
       data: {"userId": userId},
@@ -36,8 +38,40 @@ class PackagesRepository extends Repository implements PackagesInterface {
   }
 
   @override
-  Future<PackagesInfo> infoPackages() async {
+  Future<PackagesInfo> infoPackagesApi() async {
     final BaseResponse resp = await httpService.post(infoPackageUri);
     return PackagesInfo.fromJson(resp.data);
+  }
+
+  Future<bool> changePackage({required String userId, required PackageType type, required bool interner}) async {
+    if (interner) {
+      final packagesApi = await changePackageApi(userId: userId, type: type);
+      if (packagesApi != true) {
+        return false;
+      }
+    }
+
+    switch (type) {
+      case PackageType.economy:
+        packages!.economy = !packages!.economy;
+      case PackageType.task:
+        packages!.task = !packages!.task;
+      case PackageType.timer:
+        packages!.timer = !packages!.timer;
+    }
+    await _isar.packages.where().deleteAll();
+    await _isar.writeTxn(() async => _isar.packages.put(packages!));
+    return true;
+  }
+
+  Future<Packages> getPackages({required String userId, required bool interner}) async {
+    if (interner) {
+      final packagesApi = await getPackagesApi(userId: userId);
+      await _isar.packages.where().deleteAll();
+      await _isar.writeTxn(() async => _isar.packages.put(packagesApi));
+      return packagesApi;
+    } else {
+      return packages!;
+    }
   }
 }

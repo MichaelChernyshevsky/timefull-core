@@ -10,16 +10,16 @@ enum PackageType {
 @collection
 class Packages {
   final String userId;
-  final Id id;
+  Id id;
 
-  final bool? economy;
-  final bool? tasks;
-  final bool? timer;
+  bool economy;
+  bool task;
+  bool timer;
 
   Packages({
     required this.economy,
     required this.id,
-    required this.tasks,
+    required this.task,
     required this.timer,
     required this.userId,
   });
@@ -27,15 +27,15 @@ class Packages {
   factory Packages.fromJson(Map<String, dynamic> json) => Packages(
         id: json["id"] as int,
         userId: json["userId"] as String,
-        economy: json["economy"] as bool?,
-        tasks: json["tasks"] as bool?,
-        timer: json["timer"] as bool?,
+        economy: json["economy"] as bool,
+        task: json["tasks"] as bool,
+        timer: json["timer"] as bool,
       );
 
   Map<String, dynamic> serialize() {
     return {
       'economy': economy,
-      'tasks': tasks,
+      'tasks': task,
       'timer': timer,
     };
   }

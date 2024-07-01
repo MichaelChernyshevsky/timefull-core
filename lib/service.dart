@@ -138,11 +138,11 @@ class CoreService {
   //
   //
   //
-  Future<bool> packageChange({required PackageType type}) async => packageRepo.changePackage(type: type, userId: userRepo.userId);
+  Future<bool> packageChange({required PackageType type}) async => packageRepo.changePackageApi(type: type, userId: userRepo.userId);
 
-  Future<Packages> packageGet() async => packageRepo.getPackages(userId: userRepo.userId);
+  Future<Packages> packageGet() async => packageRepo.getPackagesApi(userId: userRepo.userId);
 
-  Future<PackagesInfo> packageInfo() async => packageRepo.infoPackages();
+  Future<PackagesInfo> packageInfo() async => packageRepo.infoPackagesApi();
   //
   //
   //
