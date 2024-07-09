@@ -1,7 +1,4 @@
 // ignore_for_file: depend_on_referenced_packages
-
-import 'package:timefullcore/packages/packages/func.dart';
-
 import 'core.dart';
 
 part 'packages/economy/repo.dart';
@@ -32,6 +29,8 @@ class CoreService {
           economyRepo.shemaEconomy,
           timerRepo.shemaTimer,
           userRepo.shemaUser,
+          packageRepo.shemaPackages,
+          taskRepo.shemaTask,
         ],
         directory: location ?? await localPath,
       );
@@ -40,6 +39,7 @@ class CoreService {
     economyRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
     timerRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
     packageRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
+    taskRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
   }
 
   Future<void> close() async {
@@ -138,9 +138,26 @@ class CoreService {
   //
   //
   //
-  Future<bool> packageChange({required PackageType type}) async => packageRepo.changePackageApi(type: type, userId: userRepo.userId);
+  Future<bool> packageChange({required String type}) async {
+    if (type == 'economy') {
+      // packages!.economy = !packages!.economy;
+    } else if (type == 'timer') {
+      // packages!.timer = !packages!.timer;
+    } else if (type == 'task') {
+      // packages!.task = !packages!.task;
+    }
+    return packageRepo.changePackage(type: type, userId: userRepo.userId, interner: false);
+  }
 
-  Future<Packages> packageGet() async => packageRepo.getPackagesApi(userId: userRepo.userId);
+  Future<Map<String, String>> packageGet() async {
+    final packages = await packageRepo.getPackages(userId: userRepo.userId, interner: false);
+
+    return {
+      'economy': packages.economy.toString(),
+      'timer': packages.timer.toString(),
+      'task': packages.task.toString(),
+    };
+  }
 
   Future<PackagesInfo> packageInfo() async => packageRepo.infoPackagesApi();
   //
@@ -179,8 +196,6 @@ class CoreService {
     required int count,
     required int date,
     required bool income,
-    required String userId,
-    required bool loggined,
     bool? internet,
   }) async =>
       economyRepo.addEconomy(
@@ -196,9 +211,7 @@ class CoreService {
 
   Future<List<EconomyModel>> getEconomy({bool? internet}) async => economyRepo.getEconomy(userId: userId, loggined: loggined, internet: internet ?? await internetConnected);
 
-  Future<bool> wipeEconomy() async {
-    return true;
-  }
+  Future<bool> wipeEconomy() async => economyRepo.wipeEconomy(userId: userId, loggined: loggined, internet: false);
   //
   //
   //
@@ -223,6 +236,9 @@ class CoreService {
   //
   //
   //
+  Future<bool> wipeTimer() async => timerRepo.wipe();
+
+  Future<void> actionTimer() async => timerRepo.action(userId: userId, loggined: loggined, internet: false);
 
   //
   //
@@ -250,19 +266,28 @@ class CoreService {
   //
   //
 
-  Future<bool> deleteTasks({required String id}) async {
+  Future<bool> deleteTask({required int id}) async {
+    await taskRepo.deleteTask(id: id, internet: false, loggined: false, userId: '');
     return true;
   }
 
-  Future<bool> addTasks({required TaskModel element}) async {
+  Future<bool> addTask({required TaskModel model}) async {
+    await taskRepo.addTask(model: model, internet: false, loggined: false, userId: '');
+    return true;
+  }
+
+  Future<bool> editTask({required TaskModel model}) async {
+    await taskRepo.editTask(model: model, internet: false, loggined: false, userId: '');
     return true;
   }
 
   Future<TasksModels> getTasks() async {
-    return TasksModels([]);
+    final models = await taskRepo.getTasks(internet: false, loggined: false, userId: '');
+    return models;
   }
 
-  Future<bool> tasksWipe() async {
+  Future<bool> wipeTasks() async {
+    taskRepo.wipeTask(internet: false, loggined: false, userId: '');
     return true;
   }
 }

@@ -10,4 +10,5 @@ abstract class EconomyInterface {
   void deleteEconomyApi({required String id, required String userId}) {}
   void getEconomyApi({required String userId}) {}
   void statEconomyApi() {}
+  void wipeEconomyApi({required String userId, required bool loggined, required bool internet}) {}
 }

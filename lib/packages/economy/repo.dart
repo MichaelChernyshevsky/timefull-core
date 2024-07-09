@@ -164,4 +164,18 @@ class EconomyRepository extends Repository implements EconomyInterface {
     }
     return await _isar.economyModels.where().findAll();
   }
+
+  @override
+  void wipeEconomyApi({required String userId, required bool loggined, required bool internet}) {
+    // TODO: implement wipeEconomyApi
+  }
+
+  Future<bool> wipeEconomy({required String userId, required bool loggined, required bool internet}) async {
+    try {
+      await _isar.writeTxn(() async => await _isar.economyModels.clear());
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
 }

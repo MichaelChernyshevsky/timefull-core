@@ -24,17 +24,29 @@ class TimerRepository extends ChangeNotifier implements Repository, TimerInterfa
   @override
   final HttpService httpService;
 
-  StreamController<Connector> timeModel = StreamController<Connector>.broadcast();
+  bool stateIsWork = false;
+  int twForm = 0 * 60;
+  int trForm = 0 * 60;
 
-  int tw = 0 * 60;
-  int tr = 0 * 60;
-  int timeWork = 0;
-  int timeRelax = 0;
   TimerState timerState = TimerState.stop;
   Timer? timer;
   late Isar _isar;
 
   CollectionSchema get shemaTimer => TimerModelSchema;
+
+  StreamController<Connector> timeModel = StreamController<Connector>.broadcast();
+
+  // // timeModel.stream.listen((event){
+
+  // // });
+
+  Stream<Connector> get stream async* {
+    final m = await model;
+    trForm = m.timeRelaxSave * 60;
+    twForm = m.timeWorkSave * 60;
+    yield Connector(title: 'stop', timeRelax: m.timeRelaxSave, timeWork: m.timeWorkSave);
+    yield* timeModel.stream;
+  }
 
   void refresh({required String userId}) {}
 
@@ -42,6 +54,8 @@ class TimerRepository extends ChangeNotifier implements Repository, TimerInterfa
     _isar = isar;
     if (internet && loggined) refresh(userId: userId);
   }
+
+  Future<void> inisializeStream() async {}
 
   // String get relax {
   // const String min = 'm';
@@ -78,11 +92,11 @@ class TimerRepository extends ChangeNotifier implements Repository, TimerInterfa
   //   }
   // }
 
-  Future wipe() async {}
+  Future<bool> wipe() async => true;
 
-  void change({required isWork, required isIncrease, required work, required relax}) {
-    work = int.parse(work) * 60;
-    relax = int.parse(relax) * 60;
+  void change({required bool isWork, required bool isIncrease, required int work, required int relax}) {
+    work = work * 60;
+    relax = relax * 60;
     if (isWork) {
       if (isIncrease) {
         work += 60;
@@ -100,32 +114,42 @@ class TimerRepository extends ChangeNotifier implements Repository, TimerInterfa
         }
       }
     }
+    twForm = work;
+    trForm = relax;
     timeModel.add(Connector(title: 'stop', timeRelax: (relax / 60).round(), timeWork: (work / 60).round()));
   }
 
-  void setTimerForm(int index) {
-    tw = 0;
-    tr = 0;
+  Future<void> setTimerForm(int index) async {
+    twForm = 0;
+    trForm = 0;
+    final element = await _isar.timerModels.where().findFirst();
+    await _isar.writeTxn(() async => await _isar.timerModels.where().deleteAll());
+
     if (index == 1) {
-      tw = 30 * 60;
-      tr = 10 * 60;
+      twForm = 30;
+      trForm = 10;
     } else if (index == 2) {
-      tw += 20 * 60;
-      tr = 5 * 60;
+      twForm = 20;
+      trForm = 5;
     } else {
-      tw += 10 * 60;
-      tr = 2 * 60;
+      twForm = 10;
+      trForm = 2;
     }
+    element!.timeRelaxSave = trForm;
+    element.timeWorkSave = twForm;
+    twForm *= 60;
+    twForm *= 60;
+
+    await _isar.writeTxn(() async => await _isar.timerModels.put(element));
     timeModel.add(
       Connector(
         title: 'stop',
-        timeRelax: (tr / 60).round(),
-        timeWork: (tw / 60).round(),
+        timeRelax: (trForm / 60).round(),
+        timeWork: (twForm / 60).round(),
       ),
     );
   }
 
-  Duration get duration => const Duration(seconds: 1);
   @override
   Future<bool> editTimerHistoryApi({required String userId, required String work, required String relax}) async {
     final BaseResponse resp = await httpService.patch(
@@ -177,6 +201,7 @@ class TimerRepository extends ChangeNotifier implements Repository, TimerInterfa
           element.relaxSave = 0;
           element.workSave = 0;
         }
+
         await _isar.writeTxn(() async => await _isar.timerModels.put(element));
         return RepositoryStat.sended;
       } else {
@@ -226,7 +251,14 @@ class TimerRepository extends ChangeNotifier implements Repository, TimerInterfa
     }
   }
 
-  Future<TimerModel?> get model async => await _isar.timerModels.where().findFirst();
+  Future<TimerModel> get model async {
+    final m = await _isar.timerModels.where().findFirst();
+    if (m != null) {
+      return m;
+    }
+    await _isar.writeTxn(() async => await _isar.timerModels.put(TimerModel(id: 1, userId: '0', timeRelax: 0, timeWork: 0, work: 0, relax: 0)));
+    return await model;
+  }
 
   Future<RepositoryStat> addTimeWork({
     required int time,
@@ -271,16 +303,21 @@ class TimerRepository extends ChangeNotifier implements Repository, TimerInterfa
         internet: internet,
       );
 
-  void action({required bool start, required String userId, required bool loggined, required bool internet}) {
+  Duration get duration => const Duration(seconds: 1);
+
+  void action({required String userId, required bool loggined, required bool internet}) {
+    int timeWork = twForm;
+    int timeRelax = trForm;
+
     void timerHandler() {
       Timer workTimer() => Timer.periodic(duration, (_) {
             if (timeWork > 0) {
               timeWork -= 1;
-              timeModel.add(Connector(title: getNumber(timeWork), timeRelax: (tr / 60).round(), timeWork: (tw / 60).round()));
+              timeModel.add(Connector(title: getNumber(timeWork), timeRelax: (trForm / 60).round(), timeWork: (twForm / 60).round()));
             } else {
-              timeWork = tw;
+              timeWork = twForm;
               timerState = TimerState.relax;
-              addTimeWork(time: tw ~/ 60, userId: userId, loggined: loggined, internet: internet);
+              addTimeWork(time: twForm ~/ 60, userId: userId, loggined: loggined, internet: internet);
 
               timerHandler();
             }
@@ -291,11 +328,11 @@ class TimerRepository extends ChangeNotifier implements Repository, TimerInterfa
             (_) {
               if (timeRelax > 0) {
                 timeRelax -= 1;
-                timeModel.add(Connector(title: getNumber(timeRelax), timeRelax: (tr / 60).round(), timeWork: (tw / 60).round()));
+                timeModel.add(Connector(title: getNumber(timeRelax), timeRelax: (trForm / 60).round(), timeWork: (twForm / 60).round()));
               } else {
-                timeRelax = tr;
+                timeRelax = trForm;
                 timerState = TimerState.work;
-                addTimeRelax(time: tr ~/ 60, userId: userId, loggined: loggined, internet: internet);
+                addTimeRelax(time: trForm ~/ 60, userId: userId, loggined: loggined, internet: internet);
                 timerHandler();
               }
               notifyListeners();
@@ -310,15 +347,17 @@ class TimerRepository extends ChangeNotifier implements Repository, TimerInterfa
       }
     }
 
-    if (start) {
-      timeWork = tw;
-      timeRelax = tr;
-      changeHistory(work: tw, relax: tr, userId: userId, loggined: loggined, internet: internet);
+    if (stateIsWork == false) {
+      stateIsWork = true;
+      timeWork = twForm;
+      timeRelax = trForm;
+      changeHistory(work: twForm, relax: trForm, userId: userId, loggined: loggined, internet: internet);
       timerState = TimerState.work;
       timerHandler();
     } else {
+      stateIsWork = false;
       timerState = TimerState.stop;
-      timeModel.add(Connector(title: 'stop', timeRelax: (tr / 60).round(), timeWork: (tw / 60).round()));
+      timeModel.add(Connector(title: 'stop', timeRelax: (trForm / 60).round(), timeWork: (twForm / 60).round()));
       timer?.cancel();
     }
   }

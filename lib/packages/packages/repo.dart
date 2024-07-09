@@ -20,10 +20,10 @@ class PackagesRepository extends Repository implements PackagesInterface {
   }
 
   @override
-  Future<bool> changePackageApi({required PackageType type, required String userId}) async {
+  Future<bool> changePackageApi({required String type, required String userId}) async {
     final BaseResponse resp = await httpService.post(
       changePackageUri,
-      data: {"userId": userId, "package": fromEnumToString(type)},
+      data: {"userId": userId, "package": type},
     );
     return resp.message == MESSAGE_SUCCESS;
   }
@@ -43,23 +43,23 @@ class PackagesRepository extends Repository implements PackagesInterface {
     return PackagesInfo.fromJson(resp.data);
   }
 
-  Future<bool> changePackage({required String userId, required PackageType type, required bool interner}) async {
+  Future<bool> changePackage({required String userId, required String type, required bool interner}) async {
     if (interner) {
       final packagesApi = await changePackageApi(userId: userId, type: type);
       if (packagesApi != true) {
         return false;
       }
+    } else {
+      if (type == 'economy') {
+        packages!.economy = !packages!.economy;
+      } else if (type == 'timer') {
+        packages!.timer = !packages!.timer;
+      } else if (type == 'task') {
+        packages!.task = !packages!.task;
+      }
     }
 
-    switch (type) {
-      case PackageType.economy:
-        packages!.economy = !packages!.economy;
-      case PackageType.task:
-        packages!.task = !packages!.task;
-      case PackageType.timer:
-        packages!.timer = !packages!.timer;
-    }
-    await _isar.packages.where().deleteAll();
+    await _isar.writeTxn(() async => await _isar.packages.clear());
     await _isar.writeTxn(() async => _isar.packages.put(packages!));
     return true;
   }

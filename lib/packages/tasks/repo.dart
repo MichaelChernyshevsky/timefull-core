@@ -3,41 +3,15 @@ part of '../../service.dart';
 class TaskRepository extends Repository implements TaskInterface {
   TaskRepository({required super.httpService});
 
-  Future initialize() async {}
+  late Isar _isar;
+  CollectionSchema get shemaTask => TaskModelSchema;
 
-  void refresh({required String userId}) {}
+  Future<void> initialize({required bool internet, required bool loggined, required String userId, required Isar isar}) async {
+    _isar = isar;
+    if (internet && loggined) await refresh(userId: userId);
+  }
 
-  // List<TaskModel> get() {
-  // }
-
-  // Future<bool> add({
-  //   required TaskModel task,
-  // }) async {
-  // }
-
-  // Future edit({
-  //   required TaskModel element,
-  //   // required int index,
-  // }) async {
-  //   // final elementIndex = task.id;
-  // }
-
-  // Future<bool> delete({
-  //   required String id,
-  // }) async {
-  //   int getIndex({required String id, required Box box}) {
-  //     for (var index = 0; index <= box.length; index += 1) {
-  //       if (box.values.elementAt(index).id == id) {
-  //         return index;
-  //       }
-  //     }
-  //     return -1;
-  //   }
-
-  //   final indexElement = getIndex(id: id, box: boxTasks);
-  //   await boxTasks.deleteAt(indexElement);
-  //   return true;
-  // }
+  Future<void> refresh({required String userId}) async {}
 
   @override
   Future<bool> addTasksApi({
@@ -99,5 +73,31 @@ class TaskRepository extends Repository implements TaskInterface {
       "countUnDone": countUnDone,
     });
     return resp.message == MESSAGE_SUCCESS;
+  }
+
+  @override
+  Future<void> deleteTask({required int id, required bool internet, required bool loggined, required String userId}) async {
+    await _isar.writeTxn(() async => await _isar.economyModels.delete(id));
+  }
+
+  @override
+  Future<void> editTask({required TaskModel model, required bool internet, required bool loggined, required String userId}) async {
+    await _isar.writeTxn(() async => await _isar.taskModels.put(model));
+  }
+
+  @override
+  Future<void> addTask({required TaskModel model, required bool internet, required bool loggined, required String userId}) async {
+    await _isar.writeTxn(() async => _isar.taskModels.put(model));
+  }
+
+  @override
+  Future<TasksModels> getTasks({required bool internet, required bool loggined, required String userId}) async {
+    final tasks = await _isar.taskModels.where().findAll();
+    return TasksModels(tasks);
+  }
+
+  @override
+  Future<void> wipeTask({required bool internet, required bool loggined, required String userId}) async {
+    await _isar.writeTxn(() async => await _isar.taskModels.clear());
   }
 }

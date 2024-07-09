@@ -1,3 +1,6 @@
+import 'package:timefullcore/core.dart';
+part 'model.g.dart';
+
 class TasksModels {
   final List<TaskModel> tasks;
   TasksModels(this.tasks);
@@ -12,21 +15,22 @@ class TasksModels {
   }
 }
 
+@collection
 class TaskModel {
-  final int countOnDay;
-  final int countOnTask;
-  final String date;
-  final String description;
-  final String id;
-  final String title;
-  final String userId;
+  final Id id;
+  int countOnDay;
+  int countOnTask;
+  String date;
+  String description;
+  String title;
+  String userId;
 
   TaskModel({
+    required this.id,
     required this.countOnDay,
     required this.countOnTask,
     required this.date,
     required this.description,
-    required this.id,
     required this.title,
     required this.userId,
   });
@@ -36,7 +40,7 @@ class TaskModel {
         countOnTask: json["countOnTask"] as int,
         date: json["date"] as String,
         description: json["description"] as String,
-        id: json["id"].toString(),
+        id: json["id"],
         title: json["title"] as String,
         userId: json["userId"] as String,
       );
