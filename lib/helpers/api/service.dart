@@ -1,7 +1,7 @@
-import 'package:timefullcore/packages/helpers/api/interseptors/interseptors.dart';
-import 'package:timefullcore/packages/helpers/api/models/http_exception.dart';
-import 'package:timefullcore/packages/helpers/common/api.dart';
-import 'package:timefullcore/packages/helpers/common/repository.dart';
+import 'package:timefullcore/helpers/api/interseptors/interseptors.dart';
+import 'package:timefullcore/helpers/api/models/http_exception.dart';
+import 'package:timefullcore/helpers/common/api.dart';
+import 'package:timefullcore/helpers/common/repository.dart';
 import 'package:dio/dio.dart';
 
 class DioHttpService implements HttpService {

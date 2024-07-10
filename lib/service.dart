@@ -1,4 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'package:timefullcore/packages/note/repo.dart';
+
 import 'core.dart';
 
 part 'packages/economy/repo.dart';
@@ -13,6 +15,7 @@ class CoreService {
   late EconomyRepository economyRepo;
   late TimerRepository timerRepo;
   late TaskRepository taskRepo;
+  late NoteRepository noteRepo;
   late Isar isar;
 
   Future<void> initialize({String? location, bool? shema}) async {
@@ -25,13 +28,7 @@ class CoreService {
     await Isar.initializeIsarCore(download: true);
     if (shema == true) {
       isar = await Isar.open(
-        [
-          economyRepo.shemaEconomy,
-          timerRepo.shemaTimer,
-          userRepo.shemaUser,
-          packageRepo.shemaPackages,
-          taskRepo.shemaTask,
-        ],
+        [economyRepo.shemaEconomy, timerRepo.shemaTimer, userRepo.shemaUser, packageRepo.shemaPackages, taskRepo.shemaTask, noteRepo.shemaNote, noteRepo.shemaPage],
         directory: location ?? await localPath,
       );
     }
@@ -40,6 +37,7 @@ class CoreService {
     timerRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
     packageRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
     taskRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
+    noteRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
   }
 
   Future<void> close() async {
