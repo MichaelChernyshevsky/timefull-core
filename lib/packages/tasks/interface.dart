@@ -1,36 +1,19 @@
+import 'package:timefullcore/model.dart';
 import 'package:timefullcore/packages/tasks/model.dart';
 
 abstract class TaskInterface {
-  void getTasks({
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) =>
-      TasksModels([]);
-  void deleteTask({
-    required int id,
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) {}
-  void editTask({
-    required TaskModel model,
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) {}
-  void wipeTask({
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) {}
+  void getTasks({required CoreModel coreModel}) => TasksModels([]);
+  void deleteTask({required int id, required CoreModel coreModel}) {}
+  void editTask({required TaskModel model, required CoreModel coreModel}) {}
+  void wipeTask({required CoreModel coreModel}) {}
 
-  void addTask({
-    required TaskModel model,
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) {}
+  void addTask({required TaskModel model, required CoreModel coreModel}) {}
+
+  void markTask({required int modelId, required CoreModel coreModel}) {}
+
+  void unMarkTask({required int modelId, required CoreModel coreModel}) {}
+
+  // api
 
   void getTasksApi({required String userId}) {}
   void deleteTasksApi({required String taskId}) {}

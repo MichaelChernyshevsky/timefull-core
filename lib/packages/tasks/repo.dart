@@ -18,9 +18,12 @@ class TaskRepository extends Repository implements TaskInterface {
     if (internet && loggined) await refresh(userId: userId);
   }
 
+  int get todayDateMilliseconds {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+  }
+
   Future<void> refresh({required String userId}) async => await _isar.writeTxn(() async {
-        final now = DateTime.now();
-        final todayDateMilliseconds = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
         final tasks = await _isar.taskModels.where().findAll();
 
         int millisecondsToDays(int milliseconds) {
@@ -40,7 +43,7 @@ class TaskRepository extends Repository implements TaskInterface {
               task.countUnDoneTotal += counOnTask;
             }
             task.countOnTaskDone = 0;
-            task.countUnDoneTotal += millisecondsToDays(todayDateMilliseconds - task.date) - 1;
+            task.countUnDoneTotal += millisecondsToDays(todayDateMilliseconds - task.date!) - 1;
             task.date = todayDateMilliseconds;
 
             await _isar.taskModels.put(task);
@@ -49,51 +52,51 @@ class TaskRepository extends Repository implements TaskInterface {
       });
 
   @override
-  Future<void> deleteTask({
-    required int id,
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) async {
+  Future<void> deleteTask({required int id, required CoreModel coreModel}) async {
     await _isar.writeTxn(() async => await _isar.economyModels.delete(id));
   }
 
   @override
-  Future<void> editTask({
-    required TaskModel model,
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) async {
+  Future<void> editTask({required TaskModel model, required CoreModel coreModel}) async {
     await _isar.writeTxn(() async => await _isar.taskModels.put(model));
   }
 
   @override
-  Future<void> addTask({
-    required TaskModel model,
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) async {
+  Future<void> addTask({required TaskModel model, required CoreModel coreModel}) async {
+    model.id ??= DateTime.now().millisecondsSinceEpoch;
+    model.date ??= todayDateMilliseconds;
+
     await _isar.writeTxn(() async => _isar.taskModels.put(model));
   }
 
   @override
-  Future<TasksModels> getTasks({
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) async {
+  Future<TasksModels> getTasks({required CoreModel coreModel}) async {
     final tasks = await _isar.taskModels.where().findAll();
     return TasksModels(tasks);
   }
 
   @override
-  Future<void> wipeTask({
-    required bool internet,
-    required bool loggined,
-    required String userId,
-  }) async {
+  Future<void> markTask({required int modelId, required CoreModel coreModel}) async => await _isar.writeTxn(() async {
+        final task = await _isar.taskModels.where().idEqualTo(modelId).findFirst();
+        if (task!.countOnTask == task.countOnTaskDone) {
+        } else {
+          task.countOnTaskDone += 1;
+        }
+        await _isar.taskModels.put(task);
+      });
+
+  @override
+  Future<void> unMarkTask({required int modelId, required CoreModel coreModel}) async => await _isar.writeTxn(() async {
+        final task = await _isar.taskModels.where().idEqualTo(modelId).findFirst();
+        if (task!.countOnTaskDone == 0) {
+        } else {
+          task.countOnTaskDone -= 1;
+        }
+        await _isar.taskModels.put(task);
+      });
+
+  @override
+  Future<void> wipeTask({required CoreModel coreModel}) async {
     await _isar.writeTxn(() async => await _isar.taskModels.clear());
   }
 

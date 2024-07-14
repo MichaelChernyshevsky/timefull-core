@@ -19,23 +19,23 @@ class TasksModels {
 
 @collection
 class TaskModel {
-  final Id id;
+  Id? id;
+  int? date;
+  String? userId;
 
-  int date;
   String description;
   String title;
-  String userId;
   int countOnTask;
   int countOnTaskDone;
   int countDoneTotal;
   int countUnDoneTotal;
 
   TaskModel({
-    required this.id,
-    required this.date,
+    this.id,
+    this.date,
+    this.userId,
     required this.description,
     required this.title,
-    required this.userId,
     required this.countOnTask,
     required this.countOnTaskDone,
     required this.countDoneTotal,
@@ -64,4 +64,28 @@ class TaskModel {
         "countDoneTotal": countDoneTotal,
         "countUnDoneTotal": countUnDoneTotal,
       };
+
+  TaskModel copyWith({
+    Id? id,
+    int? date,
+    String? userId,
+    String? description,
+    String? title,
+    int? countOnTask,
+    int? countOnTaskDone,
+    int? countDoneTotal,
+    int? countUnDoneTotal,
+  }) {
+    return TaskModel(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      userId: userId ?? this.userId,
+      description: description ?? this.description,
+      title: title ?? this.title,
+      countOnTask: countOnTask ?? this.countOnTask,
+      countOnTaskDone: countOnTaskDone ?? this.countOnTaskDone,
+      countDoneTotal: countDoneTotal ?? this.countDoneTotal,
+      countUnDoneTotal: countUnDoneTotal ?? this.countUnDoneTotal,
+    );
+  }
 }

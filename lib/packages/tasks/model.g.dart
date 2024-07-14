@@ -80,7 +80,12 @@ int _taskModelEstimateSize(
   var bytesCount = offsets.last;
   bytesCount += 3 + object.description.length * 3;
   bytesCount += 3 + object.title.length * 3;
-  bytesCount += 3 + object.userId.length * 3;
+  {
+    final value = object.userId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -111,11 +116,11 @@ TaskModel _taskModelDeserialize(
     countOnTask: reader.readLong(offsets[1]),
     countOnTaskDone: reader.readLong(offsets[2]),
     countUnDoneTotal: reader.readLong(offsets[3]),
-    date: reader.readLong(offsets[4]),
+    date: reader.readLongOrNull(offsets[4]),
     description: reader.readString(offsets[5]),
     id: id,
     title: reader.readString(offsets[6]),
-    userId: reader.readString(offsets[7]),
+    userId: reader.readStringOrNull(offsets[7]),
   );
   return object;
 }
@@ -136,27 +141,29 @@ P _taskModelDeserializeProp<P>(
     case 3:
       return (reader.readLong(offset)) as P;
     case 4:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
       return (reader.readString(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
 Id _taskModelGetId(TaskModel object) {
-  return object.id;
+  return object.id ?? Isar.autoIncrement;
 }
 
 List<IsarLinkBase<dynamic>> _taskModelGetLinks(TaskModel object) {
   return [];
 }
 
-void _taskModelAttach(IsarCollection<dynamic> col, Id id, TaskModel object) {}
+void _taskModelAttach(IsarCollection<dynamic> col, Id id, TaskModel object) {
+  object.id = id;
+}
 
 extension TaskModelQueryWhereSort
     on QueryBuilder<TaskModel, TaskModel, QWhere> {
@@ -459,8 +466,24 @@ extension TaskModelQueryFilter
     });
   }
 
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'date',
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'date',
+      ));
+    });
+  }
+
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateEqualTo(
-      int value) {
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'date',
@@ -470,7 +493,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -483,7 +506,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -496,8 +519,8 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -646,8 +669,24 @@ extension TaskModelQueryFilter
     });
   }
 
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'id',
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'id',
+      ));
+    });
+  }
+
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idEqualTo(
-      Id value) {
+      Id? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -657,7 +696,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idGreaterThan(
-    Id value, {
+    Id? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -670,7 +709,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idLessThan(
-    Id value, {
+    Id? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -683,8 +722,8 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idBetween(
-    Id lower,
-    Id upper, {
+    Id? lower,
+    Id? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -829,8 +868,24 @@ extension TaskModelQueryFilter
     });
   }
 
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userId',
+      ));
+    });
+  }
+
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -843,7 +898,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -858,7 +913,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -873,8 +928,8 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1263,7 +1318,7 @@ extension TaskModelQueryProperty
     });
   }
 
-  QueryBuilder<TaskModel, int, QQueryOperations> dateProperty() {
+  QueryBuilder<TaskModel, int?, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });
@@ -1281,7 +1336,7 @@ extension TaskModelQueryProperty
     });
   }
 
-  QueryBuilder<TaskModel, String, QQueryOperations> userIdProperty() {
+  QueryBuilder<TaskModel, String?, QQueryOperations> userIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'userId');
     });

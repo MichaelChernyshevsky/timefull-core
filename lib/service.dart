@@ -1,4 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'package:timefullcore/model.dart';
 import 'package:timefullcore/packages/note/interface.dart';
 import 'package:timefullcore/packages/note/models/model.dart';
 import 'package:timefullcore/packages/note/models/note_model/model.dart';
@@ -55,6 +56,8 @@ class CoreService {
     timerRepo.refresh(userId: userId);
     taskRepo.refresh(userId: userId);
   }
+
+  CoreModel get coreModel => CoreModel(loggined: false, internet: false, userId: '');
 
   //
   //
@@ -271,27 +274,27 @@ class CoreService {
   //
 
   Future<bool> deleteTask({required int id}) async {
-    await taskRepo.deleteTask(id: id, internet: false, loggined: false, userId: '');
+    await taskRepo.deleteTask(id: id, coreModel: coreModel);
     return true;
   }
 
   Future<bool> addTask({required TaskModel model}) async {
-    await taskRepo.addTask(model: model, internet: false, loggined: false, userId: '');
+    await taskRepo.addTask(model: model, coreModel: coreModel);
     return true;
   }
 
   Future<bool> editTask({required TaskModel model}) async {
-    await taskRepo.editTask(model: model, internet: false, loggined: false, userId: '');
+    await taskRepo.editTask(model: model, coreModel: coreModel);
     return true;
   }
 
   Future<TasksModels> getTasks() async {
-    final models = await taskRepo.getTasks(internet: false, loggined: false, userId: '');
+    final models = await taskRepo.getTasks(coreModel: coreModel);
     return models;
   }
 
   Future<bool> wipeTasks() async {
-    taskRepo.wipeTask(internet: false, loggined: false, userId: '');
+    taskRepo.wipeTask(coreModel: coreModel);
     return true;
   }
 
