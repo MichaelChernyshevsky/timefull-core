@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:timefullcore/core.dart';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:timefullcore/packages/note/models/note_model/model.dart';
 import 'package:timefullcore/packages/note/models/page_model/model.dart';
-import 'package:timefullcore/packages/note/repo.dart';
 
 Future<String> get testDirectory async => (await Directory.systemTemp.createTemp('/')).path;
 
@@ -72,7 +72,13 @@ void main() {
   //   });
   // });
 
-  group('Note isar without login', () {
+  group('Note Repository', () {
+    test("-  get empty", () async {
+      print(noteRepo.suffics);
+    });
+  });
+
+  group('Page isar without login', () {
     test("-  get empty", () async {
       expect((await noteRepo.getPages()).length, 0);
     });
@@ -91,6 +97,27 @@ void main() {
 
       print((await noteRepo.getPages()).map((element) => element.toJson()));
       expect((level_1 == 1) && (level_2 == 1) && (level_3 == 1), true);
+    });
+
+    test("-  delete page 1", () async {
+      await noteRepo.deletePage(2);
+      expect((await noteRepo.getPages())[0].childPage.isEmpty, true);
+    });
+  });
+
+  group('Note isar without login', () {
+    test("-  get empty", () async {
+      expect((await noteRepo.getPages())[0].notes.isEmpty, true);
+    });
+
+    test("-  add note ", () async {
+      await noteRepo.addNote(NoteModel(id: 1, text: 'text', suffics: '', position: 1, pageId: 1));
+      expect((await noteRepo.getPages())[0].notes.isEmpty, false);
+    });
+
+    test("-  add note ", () async {
+      await noteRepo.addNote(NoteModel(id: 2, text: 'text', suffics: '', position: 2, pageId: 1));
+      expect((await noteRepo.getPages())[0].notes.isEmpty, false);
     });
   });
 }

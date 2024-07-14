@@ -1,5 +1,9 @@
 // ignore_for_file: depend_on_referenced_packages
-import 'package:timefullcore/packages/note/repo.dart';
+import 'package:timefullcore/packages/note/interface.dart';
+import 'package:timefullcore/packages/note/models/model.dart';
+import 'package:timefullcore/packages/note/models/note_model/model.dart';
+import 'package:timefullcore/packages/note/models/page_model/model.dart';
+import 'package:timefullcore/packages/tasks/service.dart';
 
 import 'core.dart';
 
@@ -8,6 +12,7 @@ part 'packages/timer/repo.dart';
 part 'packages/user/repo.dart';
 part 'packages/packages/repo.dart';
 part 'packages/tasks/repo.dart';
+part 'packages/note/repo.dart';
 
 class CoreService {
   late UserRepository userRepo;
@@ -25,6 +30,7 @@ class CoreService {
     economyRepo = EconomyRepository(httpService: httpService);
     timerRepo = TimerRepository(httpService: httpService);
     taskRepo = TaskRepository(httpService: httpService);
+    noteRepo = NoteRepository(httpService: httpService);
     await Isar.initializeIsarCore(download: true);
     if (shema == true) {
       isar = await Isar.open(
@@ -288,4 +294,47 @@ class CoreService {
     taskRepo.wipeTask(internet: false, loggined: false, userId: '');
     return true;
   }
+
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //  Note
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  Future<void> addNote(NoteModel model) async => noteRepo.addNote(model);
+  Future<void> addNoteAfterParent(NoteModel model) async => noteRepo.addNoteAfterParent(model);
+
+  Future<void> addPage(PageModel model) async => noteRepo.addPage(model);
+
+  Future<void> deleteNote(int id) async => noteRepo.deleteNote(id);
+
+  Future<void> deletePage(int id) async => noteRepo.deletePage(id);
+
+  Future<void> editNote(NoteModel model) async => noteRepo.editNote(model);
+
+  Future<void> editPage(PageModel model) async => noteRepo.editPage(model);
+
+  Future<List<PageWithNotes>> getPages() async => noteRepo.getPages();
+  Future<PageWithNotes> getPageById(Id pageId) async => noteRepo.getPageById(pageId);
+
+  List<String> get suffics => noteRepo.suffics;
 }
