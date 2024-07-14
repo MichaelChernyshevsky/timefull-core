@@ -1,71 +1,100 @@
-import 'package:timefullcore/helpers/common/repository.dart';
-import 'package:timefullcore/helpers/common/stateRepository.dart';
-import 'package:timefullcore/packages/tasks/model.dart';
-import 'package:timefullcore/packages/tasks/uri.dart';
+part of '../../service.dart';
 
-class TaskService {
-  final HttpService httpService;
+class TaskService extends Repository implements TaskInterface {
+  final TaskRepository repository;
+  late Isar _isar;
 
-  TaskService({required this.httpService});
+  TaskService({required super.httpService}) : repository = TaskRepository(httpService: httpService);
 
-  Future<bool> addTaskApi({
-    required String userId,
-    required String title,
-    required String description,
-    required String date,
-    required String countOnDay,
-    required String countOnTask,
+  CollectionSchema get shemaTask => TaskModelSchema;
+
+  Future<void> initialize({
+    required CoreModel coreModel,
+    required Isar isar,
   }) async {
-    final BaseResponse resp = await httpService.post(addUri, data: {
-      "userId": userId,
-      "title": title,
-      "description": description,
-      "date": date,
-      "countOnDay": int.parse(countOnDay),
-      "countOnTask": int.parse(countOnTask),
-    });
-    return resp.message == MESSAGE_SUCCESS;
+    _isar = isar;
+    if (coreModel.internet && coreModel.loggined) await refresh(userId: coreModel.userId);
   }
 
-  Future<bool> deleteTaskApi({required String taskId}) async {
-    final BaseResponse resp = await httpService.delete(deleteUri, data: {"taskId": taskId});
-    return resp.message == MESSAGE_SUCCESS;
+  int get todayDateMilliseconds {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
   }
 
-  Future<bool> editTaskApi({
-    required String taskId,
-    required String title,
-    required String description,
-    required String date,
-    required String countOnDay,
-    required String countOnTask,
-  }) async {
-    final BaseResponse resp = await httpService.patch(editUri, data: {
-      "taskId": taskId,
-      "title": title,
-      "description": description,
-      "date": date,
-      "countOnDay": countOnDay,
-      "countOnTask": countOnTask,
-    });
-    return resp.message == MESSAGE_SUCCESS;
+  Future<void> refresh({required String userId}) async => await _isar.writeTxn(() async {
+        final tasks = await _isar.taskModels.where().findAll();
+
+        int millisecondsToDays(int milliseconds) {
+          const int msPerDay = 24 * 60 * 60 * 1000;
+          int days = (milliseconds / msPerDay).floor();
+          return days;
+        }
+
+        for (var task in tasks) {
+          if (task.date != todayDateMilliseconds) {
+            int counOnTask = task.countOnTask;
+            if (counOnTask == task.countOnTaskDone) {
+              task.countDoneTotal += counOnTask;
+            } else {
+              counOnTask -= task.countOnTaskDone;
+              task.countDoneTotal += task.countOnTaskDone;
+              task.countUnDoneTotal += counOnTask;
+            }
+            task.countOnTaskDone = 0;
+            task.countUnDoneTotal += millisecondsToDays(todayDateMilliseconds - task.date!) - 1;
+            task.date = todayDateMilliseconds;
+
+            await _isar.taskModels.put(task);
+          }
+        }
+      });
+
+  @override
+  Future<void> deleteTask({required int id, required CoreModel coreModel}) async {
+    await _isar.writeTxn(() async => await _isar.economyModels.delete(id));
   }
 
-  Future<TasksModels> getTasksApi({required String userId}) async {
-    final BaseResponse resp = await httpService.post(getUri, data: {"userId": userId});
-    return TasksModels.fromJson(resp.data);
+  @override
+  Future<void> editTask({required TaskModel model, required CoreModel coreModel}) async {
+    await _isar.writeTxn(() async => await _isar.taskModels.put(model));
   }
 
-  Future<bool> statEditTaskApi({
-    required String userId,
-    required String countDone,
-    required String countUnDone,
-  }) async {
-    final BaseResponse resp = await httpService.patch(editStatUri, data: {
-      "userId": userId,
-      "countDone": countDone,
-      "countUnDone": countUnDone,
-    });
-    return resp.message == MESSAGE_SUCCESS;
+  @override
+  Future<void> addTask({required TaskModel model, required CoreModel coreModel}) async {
+    model.id ??= DateTime.now().millisecondsSinceEpoch;
+    model.date ??= todayDateMilliseconds;
+
+    await _isar.writeTxn(() async => _isar.taskModels.put(model));
+  }
+
+  @override
+  Future<TasksModels> getTasks({required CoreModel coreModel}) async {
+    final tasks = await _isar.taskModels.where().findAll();
+    return TasksModels(tasks);
+  }
+
+  @override
+  Future<void> markTask({required int modelId, required CoreModel coreModel}) async => await _isar.writeTxn(() async {
+        final task = await _isar.taskModels.where().idEqualTo(modelId).findFirst();
+        if (task!.countOnTask == task.countOnTaskDone) {
+        } else {
+          task.countOnTaskDone += 1;
+        }
+        await _isar.taskModels.put(task);
+      });
+
+  @override
+  Future<void> unMarkTask({required int modelId, required CoreModel coreModel}) async => await _isar.writeTxn(() async {
+        final task = await _isar.taskModels.where().idEqualTo(modelId).findFirst();
+        if (task!.countOnTaskDone == 0) {
+        } else {
+          task.countOnTaskDone -= 1;
+        }
+        await _isar.taskModels.put(task);
+      });
+
+  @override
+  Future<void> wipeTask({required CoreModel coreModel}) async {
+    await _isar.writeTxn(() async => await _isar.taskModels.clear());
   }
 }

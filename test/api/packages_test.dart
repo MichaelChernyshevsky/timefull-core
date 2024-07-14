@@ -42,7 +42,7 @@
 //     });
 
 //     test("-  change", () async {
-//       expect(await packageRepo.changePackageApi(type: PackageType.task, userId: userId), true);
+//       expect(await packageRepo.changePackageApi(type: 'task', userId: userId), true);
 //     });
 //     test("-  get", () async {
 //       final Packages resp = await packageRepo.getPackagesApi(userId: userId);

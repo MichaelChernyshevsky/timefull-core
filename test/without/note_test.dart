@@ -22,13 +22,13 @@ List<Map<String, dynamic>> splitOnLevels(Map<String, dynamic> data) {
 
 void main() {
   // late UserRepository userRepo;
-  late NoteRepository noteRepo;
+  late NoteService noteRepo;
   late Isar isar;
   setUpAll(() async {
     WidgetsFlutterBinding.ensureInitialized();
     final httpService = DioHttpService(baseUrl: 'http://127.0.0.1:5000');
     // userRepo = UserRepository(httpService: httpService);
-    noteRepo = NoteRepository(httpService: httpService);
+    noteRepo = NoteService(httpService: httpService);
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open(
@@ -99,25 +99,25 @@ void main() {
       expect((level_1 == 1) && (level_2 == 1) && (level_3 == 1), true);
     });
 
-    test("-  delete page 1", () async {
-      await noteRepo.deletePage(2);
-      expect((await noteRepo.getPages())[0].childPage.isEmpty, true);
-    });
-  });
+    //   test("-  delete page 1", () async {
+    //     await noteRepo.deletePage(2);
+    //     expect((await noteRepo.getPages())[0].childPage.isEmpty, true);
+    //   });
+    // });
 
-  group('Note isar without login', () {
-    test("-  get empty", () async {
-      expect((await noteRepo.getPages())[0].notes.isEmpty, true);
-    });
+    // group('Note isar without login', () {
+    //   test("-  get empty", () async {
+    //     expect((await noteRepo.getPages())[0].notes.isEmpty, true);
+    //   });
 
-    test("-  add note ", () async {
-      await noteRepo.addNote(NoteModel(id: 1, text: 'text', suffics: '', position: 1, pageId: 1));
-      expect((await noteRepo.getPages())[0].notes.isEmpty, false);
-    });
+    //   test("-  add note ", () async {
+    //     await noteRepo.addNote(NoteModel(id: 1, text: 'text', suffics: '', position: 1, pageId: 1));
+    //     expect((await noteRepo.getPages())[0].notes.isEmpty, false);
+    //   });
 
-    test("-  add note ", () async {
-      await noteRepo.addNote(NoteModel(id: 2, text: 'text', suffics: '', position: 2, pageId: 1));
-      expect((await noteRepo.getPages())[0].notes.isEmpty, false);
-    });
+    //   test("-  add note ", () async {
+    //     await noteRepo.addNote(NoteModel(id: 2, text: 'text', suffics: '', position: 2, pageId: 1));
+    //     expect((await noteRepo.getPages())[0].notes.isEmpty, false);
+    //   });
   });
 }

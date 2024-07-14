@@ -1,19 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timefullcore/core.dart';
 
 import 'const.dart';
 
-Future<String> get testDirectory async => (await Directory.systemTemp.createTemp('/')).path;
-
 void main() {
-  late TaskRepository taskRepo;
+  late TaskService taskRepo;
   late Isar isar;
   setUpAll(() async {
     WidgetsFlutterBinding.ensureInitialized();
     final httpService = DioHttpService(baseUrl: 'http://127.0.0.1:5000');
-    taskRepo = TaskRepository(httpService: httpService);
+    taskRepo = TaskService(httpService: httpService);
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open(
@@ -28,7 +24,7 @@ void main() {
 
   group('Task without api:', () {
     test("  initialize", () async {
-      taskRepo.initialize(internet: false, loggined: false, userId: '', isar: isar);
+      taskRepo.initialize(coreModel: coreModelWithout, isar: isar);
     });
 
     test("  get empty", () async {

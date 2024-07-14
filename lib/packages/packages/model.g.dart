@@ -22,18 +22,23 @@ const PackagesSchema = CollectionSchema(
       name: r'economy',
       type: IsarType.bool,
     ),
-    r'task': PropertySchema(
+    r'note': PropertySchema(
       id: 1,
+      name: r'note',
+      type: IsarType.bool,
+    ),
+    r'task': PropertySchema(
+      id: 2,
       name: r'task',
       type: IsarType.bool,
     ),
     r'timer': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'timer',
       type: IsarType.bool,
     ),
     r'userId': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'userId',
       type: IsarType.string,
     )
@@ -69,9 +74,10 @@ void _packagesSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeBool(offsets[0], object.economy);
-  writer.writeBool(offsets[1], object.task);
-  writer.writeBool(offsets[2], object.timer);
-  writer.writeString(offsets[3], object.userId);
+  writer.writeBool(offsets[1], object.note);
+  writer.writeBool(offsets[2], object.task);
+  writer.writeBool(offsets[3], object.timer);
+  writer.writeString(offsets[4], object.userId);
 }
 
 Packages _packagesDeserialize(
@@ -83,9 +89,10 @@ Packages _packagesDeserialize(
   final object = Packages(
     economy: reader.readBool(offsets[0]),
     id: id,
-    task: reader.readBool(offsets[1]),
-    timer: reader.readBool(offsets[2]),
-    userId: reader.readString(offsets[3]),
+    note: reader.readBool(offsets[1]),
+    task: reader.readBool(offsets[2]),
+    timer: reader.readBool(offsets[3]),
+    userId: reader.readString(offsets[4]),
   );
   return object;
 }
@@ -104,6 +111,8 @@ P _packagesDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
+      return (reader.readBool(offset)) as P;
+    case 4:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -257,6 +266,16 @@ extension PackagesQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Packages, Packages, QAfterFilterCondition> noteEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'note',
+        value: value,
       ));
     });
   }
@@ -431,6 +450,18 @@ extension PackagesQuerySortBy on QueryBuilder<Packages, Packages, QSortBy> {
     });
   }
 
+  QueryBuilder<Packages, Packages, QAfterSortBy> sortByNote() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'note', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Packages, Packages, QAfterSortBy> sortByNoteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'note', Sort.desc);
+    });
+  }
+
   QueryBuilder<Packages, Packages, QAfterSortBy> sortByTask() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'task', Sort.asc);
@@ -494,6 +525,18 @@ extension PackagesQuerySortThenBy
     });
   }
 
+  QueryBuilder<Packages, Packages, QAfterSortBy> thenByNote() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'note', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Packages, Packages, QAfterSortBy> thenByNoteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'note', Sort.desc);
+    });
+  }
+
   QueryBuilder<Packages, Packages, QAfterSortBy> thenByTask() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'task', Sort.asc);
@@ -539,6 +582,12 @@ extension PackagesQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Packages, Packages, QDistinct> distinctByNote() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'note');
+    });
+  }
+
   QueryBuilder<Packages, Packages, QDistinct> distinctByTask() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'task');
@@ -570,6 +619,12 @@ extension PackagesQueryProperty
   QueryBuilder<Packages, bool, QQueryOperations> economyProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'economy');
+    });
+  }
+
+  QueryBuilder<Packages, bool, QQueryOperations> noteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'note');
     });
   }
 

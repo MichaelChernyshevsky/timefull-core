@@ -1,37 +1,38 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'package:timefullcore/model.dart';
+import 'package:timefullcore/packages/economy/repository.dart';
 import 'package:timefullcore/packages/note/interface.dart';
 import 'package:timefullcore/packages/note/models/model.dart';
 import 'package:timefullcore/packages/note/models/note_model/model.dart';
 import 'package:timefullcore/packages/note/models/page_model/model.dart';
-import 'package:timefullcore/packages/tasks/service.dart';
+import 'package:timefullcore/packages/packages/service.dart';
+import 'package:timefullcore/packages/tasks/repository.dart';
 
 import 'core.dart';
+import 'packages/economy/service.dart';
 
-part 'packages/economy/repo.dart';
 part 'packages/timer/repo.dart';
 part 'packages/user/repo.dart';
-part 'packages/packages/repo.dart';
-part 'packages/tasks/repo.dart';
-part 'packages/note/repo.dart';
+part 'packages/tasks/service.dart';
+part 'packages/note/service.dart';
 
 class CoreService {
   late UserRepository userRepo;
-  late PackagesRepository packageRepo;
-  late EconomyRepository economyRepo;
+  late PackagesService packageRepo;
+  late EconomyService economyRepo;
   late TimerRepository timerRepo;
-  late TaskRepository taskRepo;
-  late NoteRepository noteRepo;
+  late TaskService taskRepo;
+  late NoteService noteRepo;
   late Isar isar;
 
   Future<void> initialize({String? location, bool? shema}) async {
     final httpService = DioHttpService(baseUrl: 'http://127.0.0.1:5000');
     userRepo = UserRepository(httpService: httpService);
-    packageRepo = PackagesRepository(httpService: httpService);
-    economyRepo = EconomyRepository(httpService: httpService);
+    packageRepo = PackagesService(httpService: httpService);
+    economyRepo = EconomyService(httpService: httpService);
     timerRepo = TimerRepository(httpService: httpService);
-    taskRepo = TaskRepository(httpService: httpService);
-    noteRepo = NoteRepository(httpService: httpService);
+    taskRepo = TaskService(httpService: httpService);
+    noteRepo = NoteService(httpService: httpService);
     await Isar.initializeIsarCore(download: true);
     if (shema == true) {
       isar = await Isar.open(
@@ -40,10 +41,10 @@ class CoreService {
       );
     }
     userRepo.initialize(internet: false, loggined: loggined, isar: isar);
-    economyRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
+    economyRepo.initialize(coreModel: coreModel, isar: isar);
     timerRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
-    packageRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
-    taskRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
+    packageRepo.initialize(coreModel: coreModel, isar: isar);
+    taskRepo.initialize(coreModel: coreModel, isar: isar);
     noteRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
   }
 
@@ -52,7 +53,7 @@ class CoreService {
   }
 
   void refresh() {
-    economyRepo.refresh(userId: userId);
+    economyRepo.refresh(coreModel: coreModel);
     timerRepo.refresh(userId: userId);
     taskRepo.refresh(userId: userId);
   }
@@ -152,21 +153,24 @@ class CoreService {
       // packages!.timer = !packages!.timer;
     } else if (type == 'task') {
       // packages!.task = !packages!.task;
+    } else if (type == 'note') {
+      // packages!.task = !packages!.task;
     }
-    return packageRepo.changePackage(type: type, userId: userRepo.userId, interner: false);
+    return packageRepo.changePackage(type: type, coreModel: coreModel);
   }
 
   Future<Map<String, String>> packageGet() async {
-    final packages = await packageRepo.getPackages(userId: userRepo.userId, interner: false);
+    final packages = await packageRepo.getPackages(coreModel: coreModel);
 
     return {
       'economy': packages.economy.toString(),
       'timer': packages.timer.toString(),
       'task': packages.task.toString(),
+      'note': packages.note.toString(),
     };
   }
 
-  Future<PackagesInfo> packageInfo() async => packageRepo.infoPackagesApi();
+  // Future<PackagesInfo> packageInfo() async => packageRepo.infoPackagesApi();
   //
   //
   //
@@ -205,18 +209,9 @@ class CoreService {
     required bool income,
     bool? internet,
   }) async =>
-      economyRepo.addEconomy(
-        title: title,
-        description: description,
-        count: count,
-        date: date,
-        income: income,
-        userId: userId,
-        loggined: loggined,
-        internet: internet ?? await internetConnected,
-      );
+      economyRepo.addEconomy(title: title, description: description, count: count, date: date, income: income, coreModel: coreModel);
 
-  Future<List<EconomyModel>> getEconomy({bool? internet}) async => economyRepo.getEconomy(userId: userId, loggined: loggined, internet: internet ?? await internetConnected);
+  Future<List<EconomyModel>> getEconomy({bool? internet}) async => economyRepo.getEconomy(coreModel: coreModel);
 
   Future<bool> wipeEconomy() async => economyRepo.wipeEconomy(userId: userId, loggined: loggined, internet: false);
   //

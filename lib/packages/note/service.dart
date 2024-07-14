@@ -1,7 +1,7 @@
 part of '../../service.dart';
 
-class NoteRepository extends Repository implements NoteInterface {
-  NoteRepository({required super.httpService});
+class NoteService extends Repository implements NoteInterface {
+  NoteService({required super.httpService});
 
   late Isar _isar;
   CollectionSchema get shemaNote => NoteModelSchema;
