@@ -9,6 +9,7 @@ class Packages {
   bool economy;
   bool task;
   bool timer;
+  bool note;
 
   Packages({
     required this.economy,
@@ -16,6 +17,7 @@ class Packages {
     required this.task,
     required this.timer,
     required this.userId,
+    required this.note,
   });
 
   factory Packages.fromJson(Map<String, dynamic> json) => Packages(
@@ -24,6 +26,7 @@ class Packages {
         economy: json["economy"] as bool,
         task: json["tasks"] as bool,
         timer: json["timer"] as bool,
+        note: json["note"] as bool,
       );
 
   Map<String, dynamic> serialize() {
@@ -31,6 +34,7 @@ class Packages {
       'economy': economy,
       'tasks': task,
       'timer': timer,
+      'note': note,
     };
   }
 }

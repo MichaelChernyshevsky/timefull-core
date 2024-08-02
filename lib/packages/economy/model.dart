@@ -3,25 +3,26 @@ part 'model.g.dart';
 
 @collection
 class EconomyModel {
-  EconomyModel(
-      {required this.id,
-      required this.title,
-      required this.count,
-      required this.income,
-      required this.description,
-      required this.date,
-      required this.userId,
-      required this.inDBl,
-      required this.active});
+  EconomyModel({
+    required this.id,
+    required this.title,
+    required this.count,
+    required this.income,
+    this.description,
+    this.type,
+    this.date,
+    required this.userId,
+    required this.active,
+  });
   Id id;
   String title;
   String count;
   String? description;
-  int date;
+  String? type;
+  int? date;
   bool income;
   bool active;
   String userId;
-  bool inDBl;
 
   factory EconomyModel.fromJson(Map<String, Object?> json) {
     return EconomyModel(
@@ -30,9 +31,9 @@ class EconomyModel {
       count: json['count'].toString(),
       income: json['income'] as bool,
       description: json['description'] as String,
+      type: json['type'] as String,
       date: json['date'] as int,
       userId: json['userId'] as String,
-      inDBl: true,
       active: true,
     );
   }
@@ -43,6 +44,7 @@ class EconomyModel {
       'userId': userId,
       'income': income,
       'title': title,
+      'type': type,
       'description': description,
       'date': date,
       'count': count,

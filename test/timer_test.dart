@@ -7,13 +7,13 @@ Future<String> get testDirectory async => (await Directory.systemTemp.createTemp
 
 void main() {
   late UserRepository userRepo;
-  late TimerRepository timerRepo;
+  late TimerService timerRepo;
   late Isar isar;
   setUpAll(() async {
     WidgetsFlutterBinding.ensureInitialized();
     final httpService = DioHttpService(baseUrl: 'http://127.0.0.1:5000');
     userRepo = UserRepository(httpService: httpService);
-    timerRepo = TimerRepository(httpService: httpService);
+    timerRepo = TimerService(httpService: httpService);
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open(

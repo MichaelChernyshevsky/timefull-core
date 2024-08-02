@@ -1,45 +1,53 @@
 // ignore_for_file: depend_on_referenced_packages
-import 'core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:timefullcore/model.dart';
+import 'package:timefullcore/packages/economy/repository.dart';
+import 'package:timefullcore/packages/note/interface.dart';
+import 'package:timefullcore/packages/note/models/model.dart';
+import 'package:timefullcore/packages/note/models/note_model/model.dart';
+import 'package:timefullcore/packages/note/models/page_model/model.dart';
+import 'package:timefullcore/packages/packages/service.dart';
+import 'package:timefullcore/packages/tasks/repository.dart';
+import 'package:timefullcore/packages/timer/repository.dart';
 
-part 'packages/economy/repo.dart';
-part 'packages/timer/repo.dart';
+import 'core.dart';
+import 'packages/economy/service.dart';
+
+part 'packages/timer/service.dart';
 part 'packages/user/repo.dart';
-part 'packages/packages/repo.dart';
-part 'packages/tasks/repo.dart';
+part 'packages/tasks/service.dart';
+part 'packages/note/service.dart';
 
 class CoreService {
   late UserRepository userRepo;
-  late PackagesRepository packageRepo;
-  late EconomyRepository economyRepo;
-  late TimerRepository timerRepo;
-  late TaskRepository taskRepo;
+  late TimerService timerRepo;
+  late PackagesService packageService;
+  late EconomyService economyService;
+  late TaskService taskService;
+  late NoteService noteService;
   late Isar isar;
 
   Future<void> initialize({String? location, bool? shema}) async {
     final httpService = DioHttpService(baseUrl: 'http://127.0.0.1:5000');
     userRepo = UserRepository(httpService: httpService);
-    packageRepo = PackagesRepository(httpService: httpService);
-    economyRepo = EconomyRepository(httpService: httpService);
-    timerRepo = TimerRepository(httpService: httpService);
-    taskRepo = TaskRepository(httpService: httpService);
+    packageService = PackagesService(httpService: httpService);
+    economyService = EconomyService(httpService: httpService);
+    timerRepo = TimerService(httpService: httpService);
+    taskService = TaskService(httpService: httpService);
+    noteService = NoteService(httpService: httpService);
     await Isar.initializeIsarCore(download: true);
     if (shema == true) {
       isar = await Isar.open(
-        [
-          economyRepo.shemaEconomy,
-          timerRepo.shemaTimer,
-          userRepo.shemaUser,
-          packageRepo.shemaPackages,
-          taskRepo.shemaTask,
-        ],
+        [economyService.shemaEconomy, timerRepo.shemaTimer, userRepo.shemaUser, packageService.shemaPackages, taskService.shemaTask, noteService.shemaNote, noteService.shemaPage],
         directory: location ?? await localPath,
       );
     }
     userRepo.initialize(internet: false, loggined: loggined, isar: isar);
-    economyRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
+    economyService.initialize(coreModel: coreModel, isar: isar);
     timerRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
-    packageRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
-    taskRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
+    packageService.initialize(coreModel: coreModel, isar: isar);
+    taskService.initialize(coreModel: coreModel, isar: isar);
+    noteService.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
   }
 
   Future<void> close() async {
@@ -47,10 +55,12 @@ class CoreService {
   }
 
   void refresh() {
-    economyRepo.refresh(userId: userId);
+    economyService.refresh(coreModel: coreModel);
     timerRepo.refresh(userId: userId);
-    taskRepo.refresh(userId: userId);
+    taskService.refresh(userId: userId);
   }
+
+  CoreModel get coreModel => CoreModel(loggined: false, internet: false, userId: '', isWeb: kIsWeb);
 
   //
   //
@@ -145,21 +155,24 @@ class CoreService {
       // packages!.timer = !packages!.timer;
     } else if (type == 'task') {
       // packages!.task = !packages!.task;
+    } else if (type == 'note') {
+      // packages!.task = !packages!.task;
     }
-    return packageRepo.changePackage(type: type, userId: userRepo.userId, interner: false);
+    return packageService.changePackage(type: type, coreModel: coreModel);
   }
 
   Future<Map<String, String>> packageGet() async {
-    final packages = await packageRepo.getPackages(userId: userRepo.userId, interner: false);
+    final packages = await packageService.getPackages(coreModel: coreModel);
 
     return {
       'economy': packages.economy.toString(),
       'timer': packages.timer.toString(),
       'task': packages.task.toString(),
+      'note': packages.note.toString(),
     };
   }
 
-  Future<PackagesInfo> packageInfo() async => packageRepo.infoPackagesApi();
+  // Future<PackagesInfo> packageInfo() async => packageRepo.infoPackagesApi();
   //
   //
   //
@@ -190,28 +203,33 @@ class CoreService {
     return true;
   }
 
+  Future<Map<String, int>> getStat() async => economyService.getStat();
+
   Future<RepositoryStat> addEconomy({
     required String title,
+    required String type,
     required String description,
     required int count,
     required int date,
     required bool income,
     bool? internet,
   }) async =>
-      economyRepo.addEconomy(
+      economyService.addEconomy(
         title: title,
+        type: type,
         description: description,
         count: count,
         date: date,
         income: income,
-        userId: userId,
-        loggined: loggined,
-        internet: internet ?? await internetConnected,
+        coreModel: coreModel,
       );
 
-  Future<List<EconomyModel>> getEconomy({bool? internet}) async => economyRepo.getEconomy(userId: userId, loggined: loggined, internet: internet ?? await internetConnected);
+  Future<List<EconomyModel>> getEconomy({bool? internet}) async => economyService.getEconomy(coreModel: coreModel);
 
-  Future<bool> wipeEconomy() async => economyRepo.wipeEconomy(userId: userId, loggined: loggined, internet: false);
+  Future<bool> wipeEconomy() async => economyService.wipeEconomy(userId: userId, loggined: loggined, internet: false);
+
+  Future<List<String>> get listTypesEconomy async => economyService.listTypes;
+
   //
   //
   //
@@ -267,27 +285,70 @@ class CoreService {
   //
 
   Future<bool> deleteTask({required int id}) async {
-    await taskRepo.deleteTask(id: id, internet: false, loggined: false, userId: '');
+    await taskService.deleteTask(id: id, coreModel: coreModel);
     return true;
   }
 
   Future<bool> addTask({required TaskModel model}) async {
-    await taskRepo.addTask(model: model, internet: false, loggined: false, userId: '');
+    await taskService.addTask(model: model, coreModel: coreModel);
     return true;
   }
 
   Future<bool> editTask({required TaskModel model}) async {
-    await taskRepo.editTask(model: model, internet: false, loggined: false, userId: '');
+    await taskService.editTask(model: model, coreModel: coreModel);
     return true;
   }
 
   Future<TasksModels> getTasks() async {
-    final models = await taskRepo.getTasks(internet: false, loggined: false, userId: '');
+    final models = await taskService.getTasks(coreModel: coreModel);
     return models;
   }
 
   Future<bool> wipeTasks() async {
-    taskRepo.wipeTask(internet: false, loggined: false, userId: '');
+    taskService.wipeTask(coreModel: coreModel);
     return true;
   }
+
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //  Note
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  Future<void> addNote(NoteModel model) async => noteService.addNote(model);
+  Future<void> addNoteAfterParent(NoteModel model) async => noteService.addNoteAfterParent(model);
+
+  Future<void> addPage(PageModel model) async => noteService.addPage(model);
+
+  Future<void> deleteNote(int id) async => noteService.deleteNote(id);
+
+  Future<void> deletePage(int id) async => noteService.deletePage(id);
+
+  Future<void> editNote(NoteModel model) async => noteService.editNote(model);
+
+  Future<void> editPage(PageModel model) async => noteService.editPage(model);
+
+  Future<List<PageWithNotes>> getPages() async => noteService.getPages();
+  Future<PageWithNotes> getPageById(Id pageId) async => noteService.getPageById(pageId);
+
+  List<String> get suffics => noteService.suffics;
 }

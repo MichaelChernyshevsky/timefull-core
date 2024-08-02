@@ -17,9 +17,9 @@ const TaskModelSchema = CollectionSchema(
   name: r'TaskModel',
   id: -1192054402460482572,
   properties: {
-    r'countOnDay': PropertySchema(
+    r'countDoneTotal': PropertySchema(
       id: 0,
-      name: r'countOnDay',
+      name: r'countDoneTotal',
       type: IsarType.long,
     ),
     r'countOnTask': PropertySchema(
@@ -27,23 +27,33 @@ const TaskModelSchema = CollectionSchema(
       name: r'countOnTask',
       type: IsarType.long,
     ),
-    r'date': PropertySchema(
+    r'countOnTaskDone': PropertySchema(
       id: 2,
+      name: r'countOnTaskDone',
+      type: IsarType.long,
+    ),
+    r'countUnDoneTotal': PropertySchema(
+      id: 3,
+      name: r'countUnDoneTotal',
+      type: IsarType.long,
+    ),
+    r'date': PropertySchema(
+      id: 4,
       name: r'date',
-      type: IsarType.string,
+      type: IsarType.long,
     ),
     r'description': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'description',
       type: IsarType.string,
     ),
     r'title': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'title',
       type: IsarType.string,
     ),
     r'userId': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'userId',
       type: IsarType.string,
     )
@@ -68,10 +78,14 @@ int _taskModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.date.length * 3;
   bytesCount += 3 + object.description.length * 3;
   bytesCount += 3 + object.title.length * 3;
-  bytesCount += 3 + object.userId.length * 3;
+  {
+    final value = object.userId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -81,12 +95,14 @@ void _taskModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.countOnDay);
+  writer.writeLong(offsets[0], object.countDoneTotal);
   writer.writeLong(offsets[1], object.countOnTask);
-  writer.writeString(offsets[2], object.date);
-  writer.writeString(offsets[3], object.description);
-  writer.writeString(offsets[4], object.title);
-  writer.writeString(offsets[5], object.userId);
+  writer.writeLong(offsets[2], object.countOnTaskDone);
+  writer.writeLong(offsets[3], object.countUnDoneTotal);
+  writer.writeLong(offsets[4], object.date);
+  writer.writeString(offsets[5], object.description);
+  writer.writeString(offsets[6], object.title);
+  writer.writeString(offsets[7], object.userId);
 }
 
 TaskModel _taskModelDeserialize(
@@ -96,13 +112,15 @@ TaskModel _taskModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = TaskModel(
-    countOnDay: reader.readLong(offsets[0]),
+    countDoneTotal: reader.readLong(offsets[0]),
     countOnTask: reader.readLong(offsets[1]),
-    date: reader.readString(offsets[2]),
-    description: reader.readString(offsets[3]),
+    countOnTaskDone: reader.readLong(offsets[2]),
+    countUnDoneTotal: reader.readLong(offsets[3]),
+    date: reader.readLongOrNull(offsets[4]),
+    description: reader.readString(offsets[5]),
     id: id,
-    title: reader.readString(offsets[4]),
-    userId: reader.readString(offsets[5]),
+    title: reader.readString(offsets[6]),
+    userId: reader.readStringOrNull(offsets[7]),
   );
   return object;
 }
@@ -119,27 +137,33 @@ P _taskModelDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 5:
       return (reader.readString(offset)) as P;
+    case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
 Id _taskModelGetId(TaskModel object) {
-  return object.id;
+  return object.id ?? Isar.autoIncrement;
 }
 
 List<IsarLinkBase<dynamic>> _taskModelGetLinks(TaskModel object) {
   return [];
 }
 
-void _taskModelAttach(IsarCollection<dynamic> col, Id id, TaskModel object) {}
+void _taskModelAttach(IsarCollection<dynamic> col, Id id, TaskModel object) {
+  object.id = id;
+}
 
 extension TaskModelQueryWhereSort
     on QueryBuilder<TaskModel, TaskModel, QWhere> {
@@ -220,44 +244,46 @@ extension TaskModelQueryWhere
 
 extension TaskModelQueryFilter
     on QueryBuilder<TaskModel, TaskModel, QFilterCondition> {
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> countOnDayEqualTo(
-      int value) {
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countDoneTotalEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'countOnDay',
+        property: r'countDoneTotal',
         value: value,
       ));
     });
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
-      countOnDayGreaterThan(
+      countDoneTotalGreaterThan(
     int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'countOnDay',
+        property: r'countDoneTotal',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> countOnDayLessThan(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countDoneTotalLessThan(
     int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'countOnDay',
+        property: r'countDoneTotal',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> countOnDayBetween(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countDoneTotalBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -265,7 +291,7 @@ extension TaskModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'countOnDay',
+        property: r'countDoneTotal',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -328,55 +354,175 @@ extension TaskModelQueryFilter
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateEqualTo(
-    String value, {
-    bool caseSensitive = true,
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countOnTaskDoneEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'countOnTaskDone',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countOnTaskDoneGreaterThan(
+    int value, {
+    bool include = false,
   }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'countOnTaskDone',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countOnTaskDoneLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'countOnTaskDone',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countOnTaskDoneBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'countOnTaskDone',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countUnDoneTotalEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'countUnDoneTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countUnDoneTotalGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'countUnDoneTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countUnDoneTotalLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'countUnDoneTotal',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      countUnDoneTotalBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'countUnDoneTotal',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'date',
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'date',
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateEqualTo(
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'date',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateGreaterThan(
-    String value, {
+    int? value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'date',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateLessThan(
-    String value, {
+    int? value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'date',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateBetween(
-    String lower,
-    String upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -385,75 +531,6 @@ extension TaskModelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'date',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'date',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'date',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'date',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'date',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> dateIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'date',
-        value: '',
       ));
     });
   }
@@ -592,8 +669,24 @@ extension TaskModelQueryFilter
     });
   }
 
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'id',
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'id',
+      ));
+    });
+  }
+
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idEqualTo(
-      Id value) {
+      Id? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -603,7 +696,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idGreaterThan(
-    Id value, {
+    Id? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -616,7 +709,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idLessThan(
-    Id value, {
+    Id? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -629,8 +722,8 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> idBetween(
-    Id lower,
-    Id upper, {
+    Id? lower,
+    Id? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -775,8 +868,24 @@ extension TaskModelQueryFilter
     });
   }
 
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'userId',
+      ));
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'userId',
+      ));
+    });
+  }
+
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -789,7 +898,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -804,7 +913,7 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -819,8 +928,8 @@ extension TaskModelQueryFilter
   }
 
   QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> userIdBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -913,15 +1022,15 @@ extension TaskModelQueryLinks
     on QueryBuilder<TaskModel, TaskModel, QFilterCondition> {}
 
 extension TaskModelQuerySortBy on QueryBuilder<TaskModel, TaskModel, QSortBy> {
-  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByCountOnDay() {
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByCountDoneTotal() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'countOnDay', Sort.asc);
+      return query.addSortBy(r'countDoneTotal', Sort.asc);
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByCountOnDayDesc() {
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByCountDoneTotalDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'countOnDay', Sort.desc);
+      return query.addSortBy(r'countDoneTotal', Sort.desc);
     });
   }
 
@@ -934,6 +1043,31 @@ extension TaskModelQuerySortBy on QueryBuilder<TaskModel, TaskModel, QSortBy> {
   QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByCountOnTaskDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'countOnTask', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByCountOnTaskDone() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countOnTaskDone', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByCountOnTaskDoneDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countOnTaskDone', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByCountUnDoneTotal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countUnDoneTotal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy>
+      sortByCountUnDoneTotalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countUnDoneTotal', Sort.desc);
     });
   }
 
@@ -988,15 +1122,15 @@ extension TaskModelQuerySortBy on QueryBuilder<TaskModel, TaskModel, QSortBy> {
 
 extension TaskModelQuerySortThenBy
     on QueryBuilder<TaskModel, TaskModel, QSortThenBy> {
-  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByCountOnDay() {
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByCountDoneTotal() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'countOnDay', Sort.asc);
+      return query.addSortBy(r'countDoneTotal', Sort.asc);
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByCountOnDayDesc() {
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByCountDoneTotalDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'countOnDay', Sort.desc);
+      return query.addSortBy(r'countDoneTotal', Sort.desc);
     });
   }
 
@@ -1009,6 +1143,31 @@ extension TaskModelQuerySortThenBy
   QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByCountOnTaskDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'countOnTask', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByCountOnTaskDone() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countOnTaskDone', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByCountOnTaskDoneDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countOnTaskDone', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByCountUnDoneTotal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countUnDoneTotal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy>
+      thenByCountUnDoneTotalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countUnDoneTotal', Sort.desc);
     });
   }
 
@@ -1075,9 +1234,9 @@ extension TaskModelQuerySortThenBy
 
 extension TaskModelQueryWhereDistinct
     on QueryBuilder<TaskModel, TaskModel, QDistinct> {
-  QueryBuilder<TaskModel, TaskModel, QDistinct> distinctByCountOnDay() {
+  QueryBuilder<TaskModel, TaskModel, QDistinct> distinctByCountDoneTotal() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'countOnDay');
+      return query.addDistinctBy(r'countDoneTotal');
     });
   }
 
@@ -1087,10 +1246,21 @@ extension TaskModelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QDistinct> distinctByDate(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TaskModel, TaskModel, QDistinct> distinctByCountOnTaskDone() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'date', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'countOnTaskDone');
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QDistinct> distinctByCountUnDoneTotal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'countUnDoneTotal');
+    });
+  }
+
+  QueryBuilder<TaskModel, TaskModel, QDistinct> distinctByDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'date');
     });
   }
 
@@ -1124,9 +1294,9 @@ extension TaskModelQueryProperty
     });
   }
 
-  QueryBuilder<TaskModel, int, QQueryOperations> countOnDayProperty() {
+  QueryBuilder<TaskModel, int, QQueryOperations> countDoneTotalProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'countOnDay');
+      return query.addPropertyName(r'countDoneTotal');
     });
   }
 
@@ -1136,7 +1306,19 @@ extension TaskModelQueryProperty
     });
   }
 
-  QueryBuilder<TaskModel, String, QQueryOperations> dateProperty() {
+  QueryBuilder<TaskModel, int, QQueryOperations> countOnTaskDoneProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'countOnTaskDone');
+    });
+  }
+
+  QueryBuilder<TaskModel, int, QQueryOperations> countUnDoneTotalProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'countUnDoneTotal');
+    });
+  }
+
+  QueryBuilder<TaskModel, int?, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });
@@ -1154,7 +1336,7 @@ extension TaskModelQueryProperty
     });
   }
 
-  QueryBuilder<TaskModel, String, QQueryOperations> userIdProperty() {
+  QueryBuilder<TaskModel, String?, QQueryOperations> userIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'userId');
     });

@@ -1,5 +1,5 @@
 abstract class TimerInterface {
-  void getTimerApi({required String userId}) {}
+  // void getTimerApi({required String userId}) {}
 
   void editTimerHistoryApi({
     required String userId,

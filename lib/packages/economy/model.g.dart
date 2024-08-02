@@ -37,19 +37,19 @@ const EconomyModelSchema = CollectionSchema(
       name: r'description',
       type: IsarType.string,
     ),
-    r'inDBl': PropertySchema(
-      id: 4,
-      name: r'inDBl',
-      type: IsarType.bool,
-    ),
     r'income': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'income',
       type: IsarType.bool,
     ),
     r'title': PropertySchema(
-      id: 6,
+      id: 5,
       name: r'title',
+      type: IsarType.string,
+    ),
+    r'type': PropertySchema(
+      id: 6,
+      name: r'type',
       type: IsarType.string,
     ),
     r'userId': PropertySchema(
@@ -86,6 +86,12 @@ int _economyModelEstimateSize(
     }
   }
   bytesCount += 3 + object.title.length * 3;
+  {
+    final value = object.type;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.userId.length * 3;
   return bytesCount;
 }
@@ -100,9 +106,9 @@ void _economyModelSerialize(
   writer.writeString(offsets[1], object.count);
   writer.writeLong(offsets[2], object.date);
   writer.writeString(offsets[3], object.description);
-  writer.writeBool(offsets[4], object.inDBl);
-  writer.writeBool(offsets[5], object.income);
-  writer.writeString(offsets[6], object.title);
+  writer.writeBool(offsets[4], object.income);
+  writer.writeString(offsets[5], object.title);
+  writer.writeString(offsets[6], object.type);
   writer.writeString(offsets[7], object.userId);
 }
 
@@ -115,12 +121,12 @@ EconomyModel _economyModelDeserialize(
   final object = EconomyModel(
     active: reader.readBool(offsets[0]),
     count: reader.readString(offsets[1]),
-    date: reader.readLong(offsets[2]),
+    date: reader.readLongOrNull(offsets[2]),
     description: reader.readStringOrNull(offsets[3]),
     id: id,
-    inDBl: reader.readBool(offsets[4]),
-    income: reader.readBool(offsets[5]),
-    title: reader.readString(offsets[6]),
+    income: reader.readBool(offsets[4]),
+    title: reader.readString(offsets[5]),
+    type: reader.readStringOrNull(offsets[6]),
     userId: reader.readString(offsets[7]),
   );
   return object;
@@ -138,15 +144,15 @@ P _economyModelDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
       return (reader.readBool(offset)) as P;
     case 5:
-      return (reader.readBool(offset)) as P;
-    case 6:
       return (reader.readString(offset)) as P;
+    case 6:
+      return (reader.readStringOrNull(offset)) as P;
     case 7:
       return (reader.readString(offset)) as P;
     default:
@@ -392,8 +398,25 @@ extension EconomyModelQueryFilter
     });
   }
 
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> dateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'date',
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition>
+      dateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'date',
+      ));
+    });
+  }
+
   QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> dateEqualTo(
-      int value) {
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'date',
@@ -404,7 +427,7 @@ extension EconomyModelQueryFilter
 
   QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition>
       dateGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -417,7 +440,7 @@ extension EconomyModelQueryFilter
   }
 
   QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> dateLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -430,8 +453,8 @@ extension EconomyModelQueryFilter
   }
 
   QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> dateBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -653,16 +676,6 @@ extension EconomyModelQueryFilter
     });
   }
 
-  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> inDBlEqualTo(
-      bool value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inDBl',
-        value: value,
-      ));
-    });
-  }
-
   QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> incomeEqualTo(
       bool value) {
     return QueryBuilder.apply(this, (query) {
@@ -802,6 +815,157 @@ extension EconomyModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'title',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> typeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'type',
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition>
+      typeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'type',
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> typeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition>
+      typeGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> typeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> typeBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'type',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition>
+      typeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> typeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> typeContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition> typeMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'type',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition>
+      typeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'type',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterFilterCondition>
+      typeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'type',
         value: '',
       ));
     });
@@ -1000,18 +1164,6 @@ extension EconomyModelQuerySortBy
     });
   }
 
-  QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> sortByInDBl() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inDBl', Sort.asc);
-    });
-  }
-
-  QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> sortByInDBlDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inDBl', Sort.desc);
-    });
-  }
-
   QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> sortByIncome() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'income', Sort.asc);
@@ -1033,6 +1185,18 @@ extension EconomyModelQuerySortBy
   QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> sortByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> sortByType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'type', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> sortByTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'type', Sort.desc);
     });
   }
 
@@ -1112,18 +1276,6 @@ extension EconomyModelQuerySortThenBy
     });
   }
 
-  QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> thenByInDBl() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inDBl', Sort.asc);
-    });
-  }
-
-  QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> thenByInDBlDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'inDBl', Sort.desc);
-    });
-  }
-
   QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> thenByIncome() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'income', Sort.asc);
@@ -1145,6 +1297,18 @@ extension EconomyModelQuerySortThenBy
   QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> thenByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> thenByType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'type', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QAfterSortBy> thenByTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'type', Sort.desc);
     });
   }
 
@@ -1189,12 +1353,6 @@ extension EconomyModelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<EconomyModel, EconomyModel, QDistinct> distinctByInDBl() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'inDBl');
-    });
-  }
-
   QueryBuilder<EconomyModel, EconomyModel, QDistinct> distinctByIncome() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'income');
@@ -1205,6 +1363,13 @@ extension EconomyModelQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<EconomyModel, EconomyModel, QDistinct> distinctByType(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'type', caseSensitive: caseSensitive);
     });
   }
 
@@ -1236,7 +1401,7 @@ extension EconomyModelQueryProperty
     });
   }
 
-  QueryBuilder<EconomyModel, int, QQueryOperations> dateProperty() {
+  QueryBuilder<EconomyModel, int?, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });
@@ -1245,12 +1410,6 @@ extension EconomyModelQueryProperty
   QueryBuilder<EconomyModel, String?, QQueryOperations> descriptionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'description');
-    });
-  }
-
-  QueryBuilder<EconomyModel, bool, QQueryOperations> inDBlProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'inDBl');
     });
   }
 
@@ -1263,6 +1422,12 @@ extension EconomyModelQueryProperty
   QueryBuilder<EconomyModel, String, QQueryOperations> titleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'title');
+    });
+  }
+
+  QueryBuilder<EconomyModel, String?, QQueryOperations> typeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'type');
     });
   }
 
