@@ -1,4 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:isar/isar.dart';
+
 part 'model.g.dart';
 
 @collection
@@ -48,4 +50,9 @@ class UserModel {
         sex: json["info"]["sex"] as String?,
         userId: json["info"]["userId"].toString(),
       );
+
+  @override
+  String toString() {
+    return 'UserModel(id: $id, admin: $admin, creator: $creator, email: $email, packagesId: $packagesId, password: $password, phone: $phone, subscribed: $subscribed, age: $age, name: $name, name2: $name2, sex: $sex, userId: $userId)';
+  }
 }

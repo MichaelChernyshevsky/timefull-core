@@ -9,18 +9,19 @@ import 'package:timefullcore/packages/note/models/page_model/model.dart';
 import 'package:timefullcore/packages/packages/service.dart';
 import 'package:timefullcore/packages/tasks/repository.dart';
 import 'package:timefullcore/packages/timer/repository.dart';
+import 'package:timefullcore/packages/user/repository.dart';
 
 import 'core.dart';
 import 'packages/economy/service.dart';
 
 part 'packages/timer/service.dart';
-part 'packages/user/repo.dart';
+part 'packages/user/service.dart';
 part 'packages/tasks/service.dart';
 part 'packages/note/service.dart';
 
 class CoreService {
-  late UserRepository userRepo;
-  late TimerService timerRepo;
+  late UserService userService;
+  late TimerService timerService;
   late PackagesService packageService;
   late EconomyService economyService;
   late TaskService taskService;
@@ -29,22 +30,22 @@ class CoreService {
 
   Future<void> initialize({String? location, bool? shema}) async {
     final httpService = DioHttpService(baseUrl: 'http://127.0.0.1:5000');
-    userRepo = UserRepository(httpService: httpService);
+    userService = UserService(httpService: httpService);
     packageService = PackagesService(httpService: httpService);
     economyService = EconomyService(httpService: httpService);
-    timerRepo = TimerService(httpService: httpService);
+    timerService = TimerService(httpService: httpService);
     taskService = TaskService(httpService: httpService);
     noteService = NoteService(httpService: httpService);
     await Isar.initializeIsarCore(download: true);
     if (shema == true) {
       isar = await Isar.open(
-        [economyService.shemaEconomy, timerRepo.shemaTimer, userRepo.shemaUser, packageService.shemaPackages, taskService.shemaTask, noteService.shemaNote, noteService.shemaPage],
+        [economyService.shemaEconomy, timerService.shemaTimer, userService.shemaUser, packageService.shemaPackages, taskService.shemaTask, noteService.shemaNote, noteService.shemaPage],
         directory: location ?? await localPath,
       );
     }
-    userRepo.initialize(internet: false, loggined: loggined, isar: isar);
+    userService.initialize(coreModel: coreModel, isar: isar);
     economyService.initialize(coreModel: coreModel, isar: isar);
-    timerRepo.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
+    timerService.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
     packageService.initialize(coreModel: coreModel, isar: isar);
     taskService.initialize(coreModel: coreModel, isar: isar);
     noteService.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
@@ -56,7 +57,7 @@ class CoreService {
 
   void refresh() {
     economyService.refresh(coreModel: coreModel);
-    timerRepo.refresh(userId: userId);
+    timerService.refresh(userId: userId);
     taskService.refresh(userId: userId);
   }
 
@@ -94,7 +95,7 @@ class CoreService {
     String? phone,
     int? age,
   }) async =>
-      userRepo.editUser(
+      userService.editUser(
         userId: userId,
         name: name,
         name2: name2,
@@ -103,26 +104,26 @@ class CoreService {
         age: age,
       );
 
-  Future get user async => userRepo.user;
+  Future get user async => userService.user;
 
   Future signIn({
     required String email,
     required String password,
   }) async =>
-      userRepo.signIn(
+      userService.signIn(
         email: email,
         password: password,
       );
 
-  void signOut() => userRepo.signOut();
+  void signOut() => userService.signOut();
 
-  void userDelete() => userRepo.deleteUser();
+  void userDelete() => userService.deleteUser();
 
-  void signUp({required String email, required String password}) => userRepo.signUp(email: email, password: password);
+  void signUp({required String email, required String password}) => userService.signUp(email: email, password: password);
 
-  bool get loggined => userRepo.loggined;
+  bool get loggined => userService.loggined;
 
-  String get userId => userRepo.userId;
+  String get userId => userService.userId;
   //
   //
   //
@@ -219,7 +220,7 @@ class CoreService {
         type: type,
         description: description,
         count: count,
-        date: date,
+        date: date.toString(),
         income: income,
         coreModel: coreModel,
       );
@@ -254,9 +255,9 @@ class CoreService {
   //
   //
   //
-  Future<bool> wipeTimer() async => timerRepo.wipe();
+  Future<bool> wipeTimer() async => timerService.wipe();
 
-  Future<void> actionTimer() async => timerRepo.action(userId: userId, loggined: loggined, internet: false);
+  Future<void> actionTimer() async => timerService.action(userId: userId, loggined: loggined, internet: false);
 
   //
   //

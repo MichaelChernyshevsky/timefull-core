@@ -16,6 +16,7 @@ class PackagesRepository {
       changePackageUri,
       data: {"userId": coreModel.userId, "package": type},
     );
+
     return resp.message == MESSAGE_SUCCESS;
   }
 
@@ -27,7 +28,7 @@ class PackagesRepository {
     return Packages.fromJson(resp.data);
   }
 
-  Future<PackagesInfo> infoPackagesApi() async {
+  Future<PackagesInfo> infoPackagesApi({required CoreModel coreModel}) async {
     final BaseResponse resp = await httpService.post(infoPackageUri);
     return PackagesInfo.fromJson(resp.data);
   }

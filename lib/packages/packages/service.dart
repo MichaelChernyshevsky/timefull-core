@@ -43,16 +43,16 @@ class PackagesService extends Repository implements PackagesInterface {
       if (packagesApi != true) {
         return false;
       }
-    } else {
-      if (type == 'economy') {
-        packages!.economy = !packages!.economy;
-      } else if (type == 'timer') {
-        packages!.timer = !packages!.timer;
-      } else if (type == 'task') {
-        packages!.task = !packages!.task;
-      } else if (type == 'note') {
-        packages!.note = !packages!.note;
-      }
+    }
+
+    if (type == 'economy') {
+      packages!.economy = !packages!.economy;
+    } else if (type == 'timer') {
+      packages!.timer = !packages!.timer;
+    } else if (type == 'task') {
+      packages!.task = !packages!.task;
+    } else if (type == 'note') {
+      packages!.note = !packages!.note;
     }
 
     await _isar.writeTxn(() async => await _isar.packages.clear());
@@ -64,11 +64,21 @@ class PackagesService extends Repository implements PackagesInterface {
   Future<Packages> getPackages({required CoreModel coreModel}) async {
     if (coreModel.internet) {
       final packagesApi = await repository.getPackagesApi(coreModel: coreModel);
-      await _isar.packages.where().deleteAll();
-      await _isar.writeTxn(() async => _isar.packages.put(packagesApi));
+      // await _isar.packages.where().deleteAll();
+      // await _isar.writeTxn(() async => _isar.packages.put(packagesApi));
       return packagesApi;
     } else {
       return packages!;
+    }
+  }
+
+  Future<PackagesInfo?> infoPackages({
+    required CoreModel coreModel,
+  }) async {
+    if (coreModel.internet) {
+      return await repository.infoPackagesApi(coreModel: coreModel);
+    } else {
+      return null;
     }
   }
 }

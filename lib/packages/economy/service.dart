@@ -76,7 +76,7 @@ class EconomyService extends Repository implements EconomyInterface {
     required int count,
     required bool income,
     required CoreModel coreModel,
-    int? date,
+    String? date,
   }) async {
     Future<void> save() async {
       await _isar.writeTxn(() async {
@@ -86,28 +86,26 @@ class EconomyService extends Repository implements EconomyInterface {
           type: type,
           count: count.toString(),
           income: true,
-          description: "This is an example",
-          date: date ?? DateTime.now().millisecondsSinceEpoch,
+          description: description,
+          date: date != null ? int.parse(date) : null,
           userId: coreModel.userId,
           active: true,
         );
-
         await _isar.economyModels.put(newEconomy);
       });
     }
 
     try {
       if (coreModel.internet && coreModel.loggined) {
-        final state = (await repository.addEconomyApi(
-              count: count,
-              title: title,
-              description: description,
-              date: date ?? DateTime.now().millisecondsSinceEpoch,
-              income: income == true ? 1 : 0,
-              userId: coreModel.userId,
-            ) ==
-            RepositoryStat.resp_success);
-        if (state) {
+        final state = await repository.addEconomyApi(
+          count: count,
+          title: title,
+          description: description,
+          date: int.parse(date ?? '0'),
+          income: income == true ? 1 : 0,
+          userId: coreModel.userId,
+        );
+        if (state == RepositoryStat.resp_success) {
           await save();
           return RepositoryStat.sended;
         }
@@ -123,12 +121,14 @@ class EconomyService extends Repository implements EconomyInterface {
     try {
       if (coreModel.internet && coreModel.loggined) {
         await repository.deleteEconomyApi(id: id.toString(), userId: coreModel.userId);
+
         await _isar.writeTxn(() async => await _isar.economyModels.delete(id));
       } else {
         final List<EconomyModel> elements = await _isar.economyModels.where().idEqualTo(id).findAll();
         await _isar.writeTxn(() async => await _isar.economyModels.where().idEqualTo(id).deleteAll());
         if (elements.isNotEmpty) {
           elements[0].active = false;
+
           await _isar.writeTxn(() async => await _isar.economyModels.put(elements[0]));
         }
       }
@@ -168,7 +168,7 @@ class EconomyService extends Repository implements EconomyInterface {
       await refresh(coreModel: coreModel);
     }
     if (from == null && to == null) {
-      return await _isar.economyModels.where().findAll();
+      return await _isar.economyModels.filter().activeEqualTo(true).findAll();
     } else {
       return _isar.economyModels
           .filter()
@@ -178,6 +178,7 @@ class EconomyService extends Repository implements EconomyInterface {
             includeLower: true,
             includeUpper: true,
           )
+          .activeEqualTo(true)
           .findAll();
     }
   }
