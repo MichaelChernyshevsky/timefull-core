@@ -24,6 +24,7 @@ class TaskRepository {
       "countOnDay": int.parse(countOnDay),
       "countOnTask": int.parse(countOnTask),
     });
+
     return resp.message == MESSAGE_SUCCESS;
   }
 

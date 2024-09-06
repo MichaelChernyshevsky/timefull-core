@@ -46,8 +46,8 @@ class TimerService extends ChangeNotifier implements Repository {
     yield* timeModel.stream;
   }
 
-  Future<void> initialize({required bool internet, required bool loggined, required String userId, required Isar isar}) async {
-    if (internet && loggined) refresh(userId: userId);
+  Future<void> initialize({required CoreModel coreModel, required Isar isar}) async {
+    if (coreModel.internet && coreModel.loggined) refresh(userId: coreModel.userId);
     repository = TimerRepository(httpService: httpService, isar: isar);
   }
 

@@ -7,6 +7,7 @@ import 'package:timefullcore/packages/note/models/model.dart';
 import 'package:timefullcore/packages/note/models/note_model/model.dart';
 import 'package:timefullcore/packages/note/models/page_model/model.dart';
 import 'package:timefullcore/packages/packages/service.dart';
+import 'package:timefullcore/packages/sport/service.dart';
 import 'package:timefullcore/packages/tasks/repository.dart';
 import 'package:timefullcore/packages/timer/repository.dart';
 import 'package:timefullcore/packages/user/repository.dart';
@@ -26,6 +27,7 @@ class CoreService {
   late EconomyService economyService;
   late TaskService taskService;
   late NoteService noteService;
+  late SportService sportService;
   late Isar isar;
 
   Future<void> initialize({String? location, bool? shema}) async {
@@ -36,6 +38,7 @@ class CoreService {
     timerService = TimerService(httpService: httpService);
     taskService = TaskService(httpService: httpService);
     noteService = NoteService(httpService: httpService);
+    sportService = SportService(httpService: httpService);
     await Isar.initializeIsarCore(download: true);
     if (shema == true) {
       isar = await Isar.open(
@@ -45,7 +48,7 @@ class CoreService {
     }
     userService.initialize(coreModel: coreModel, isar: isar);
     economyService.initialize(coreModel: coreModel, isar: isar);
-    timerService.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
+    timerService.initialize(coreModel: coreModel, isar: isar);
     packageService.initialize(coreModel: coreModel, isar: isar);
     taskService.initialize(coreModel: coreModel, isar: isar);
     noteService.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);

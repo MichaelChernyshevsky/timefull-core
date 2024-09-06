@@ -20,15 +20,14 @@ class TasksModels {
 @collection
 class TaskModel {
   Id? id;
-  int? date;
   String? userId;
-
   String description;
   String title;
   int countOnTask;
   int countOnTaskDone;
   int countDoneTotal;
   int countUnDoneTotal;
+  int? date;
 
   TaskModel({
     this.id,
@@ -44,14 +43,14 @@ class TaskModel {
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(
         id: json["id"],
-        countOnTask: json["countOnTask"] as int,
-        date: json["date"] as int,
+        countOnTask: json["countOnTask"],
+        date: int.parse(json["date"]),
         description: json["description"] as String,
         title: json["title"] as String,
         userId: json["userId"] as String,
-        countDoneTotal: json["countDone"] as int,
-        countUnDoneTotal: json["countUnDone"] as int,
-        countOnTaskDone: json["countOnTaskDone"] as int,
+        countDoneTotal: int.parse(json["countDone"] ?? '0'),
+        countUnDoneTotal: int.parse(json["countUnDone"] ?? '0'),
+        countOnTaskDone: int.parse(json["countOnTaskDone"] ?? '0'),
       );
 
   Map<String, dynamic> toJson() => {

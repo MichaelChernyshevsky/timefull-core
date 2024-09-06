@@ -63,18 +63,41 @@ class TaskService extends Repository implements TaskInterface {
   Future<void> addTask({required TaskModel model, required CoreModel coreModel}) async {
     model.id ??= DateTime.now().millisecondsSinceEpoch;
     model.date ??= todayDateMilliseconds;
-
-    await _isar.writeTxn(() async => _isar.taskModels.put(model));
+    if (coreModel.internet && coreModel.loggined) {
+      final resp = await repository.addTaskApi(
+        userId: coreModel.userId,
+        title: model.title,
+        description: model.description,
+        date: model.date.toString(),
+        countOnDay: '0',
+        countOnTask: model.countOnTask.toString(),
+      );
+      print(resp);
+      if (resp) {
+        await _isar.writeTxn(() async => _isar.taskModels.put(model));
+      }
+    } else {
+      await _isar.writeTxn(() async => _isar.taskModels.put(model));
+    }
   }
 
   @override
   Future<TasksModels> getTasks({required CoreModel coreModel}) async {
+    if (coreModel.internet && coreModel.loggined) {
+      final tasks = await repository.getTasksApi(userId: coreModel.userId);
+      await _isar.writeTxn(() async {
+        await _isar.taskModels.clear();
+        await _isar.taskModels.putAll(tasks.tasks);
+      });
+    }
     final tasks = await _isar.taskModels.where().findAll();
     return TasksModels(tasks);
   }
 
   @override
   Future<void> markTask({required int modelId, required CoreModel coreModel}) async => await _isar.writeTxn(() async {
+        if (coreModel.internet && coreModel.loggined) {}
+
         final task = await _isar.taskModels.where().idEqualTo(modelId).findFirst();
         if (task!.countOnTask == task.countOnTaskDone) {
         } else {
@@ -85,6 +108,8 @@ class TaskService extends Repository implements TaskInterface {
 
   @override
   Future<void> unMarkTask({required int modelId, required CoreModel coreModel}) async => await _isar.writeTxn(() async {
+        if (coreModel.internet && coreModel.loggined) {}
+
         final task = await _isar.taskModels.where().idEqualTo(modelId).findFirst();
         if (task!.countOnTaskDone == 0) {
         } else {
@@ -95,6 +120,8 @@ class TaskService extends Repository implements TaskInterface {
 
   @override
   Future<void> wipeTask({required CoreModel coreModel}) async {
+    if (coreModel.internet && coreModel.loggined) {}
+
     await _isar.writeTxn(() async => await _isar.taskModels.clear());
   }
 }
