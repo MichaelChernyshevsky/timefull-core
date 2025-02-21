@@ -1,1 +1,3 @@
-git tag "v2.0.0+$(date +%s%)"
+git tag "v2.0.0+$(date +%s)"
+
+ git push origin --tags 
