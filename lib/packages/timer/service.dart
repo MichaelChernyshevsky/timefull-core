@@ -51,6 +51,17 @@ class TimerService extends ChangeNotifier implements Repository {
     repository = TimerRepository(httpService: httpService, isar: isar);
   }
 
+  void importdb(Map<String, dynamic> db) {}
+
+  Map<String, dynamic> exportdb() {
+    return {
+      'economy': {},
+      'sport': {},
+      'tasks': {},
+      'timer': {},
+    };
+  }
+
   void refresh({required String userId}) {}
 
   Future<bool> wipe() async => true;

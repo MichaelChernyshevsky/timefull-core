@@ -65,6 +65,41 @@ class CoreService {
     taskService.refresh(userId: userId);
   }
 
+  void importdb(Map<String, dynamic> db) {
+    if (db.containsKey('economy')) {
+      economyService.importdb(db['economy']);
+    } else {
+      throw Exception('"economy" not found in the database');
+    }
+
+    if (db.containsKey('timer')) {
+      timerService.importdb(db['timer']);
+    } else {
+      throw Exception(' "timer" not found in the database');
+    }
+
+    if (db.containsKey('tasks')) {
+      taskService.importdb(db['tasks']);
+    } else {
+      throw Exception(' "tasks" not found in the database');
+    }
+
+    if (db.containsKey('sport')) {
+      sportService.importdb(db['sport']);
+    } else {
+      throw Exception(' "sport" not found in the database');
+    }
+  }
+
+  Map<String, dynamic> exportdb() {
+    return {
+      'economy': economyService.exportdb(),
+      'sport': sportService.exportdb(),
+      'tasks': taskService.exportdb(),
+      'timer': timerService.exportdb(),
+    };
+  }
+
   CoreModel get coreModel => CoreModel(loggined: false, internet: false, userId: '', isWeb: kIsWeb);
 
   //

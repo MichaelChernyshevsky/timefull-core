@@ -33,6 +33,17 @@ class EconomyService extends Repository implements EconomyInterface {
     }
   }
 
+  void importdb(Map<String, dynamic> db) {}
+
+  Map<String, dynamic> exportdb() {
+    return {
+      'economy': {},
+      'sport': {},
+      'tasks': {},
+      'timer': {},
+    };
+  }
+
   Future<bool> refresh({required CoreModel coreModel}) async {
     // try {
     //   final list = await _isar.economyModels.filter().findAll();

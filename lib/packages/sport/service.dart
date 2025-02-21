@@ -16,6 +16,17 @@ class SportService extends Repository {
     _isar = isar;
   }
 
+  void importdb(Map<String, dynamic> db) {}
+
+  Map<String, dynamic> exportdb() {
+    return {
+      'economy': {},
+      'sport': {},
+      'tasks': {},
+      'timer': {},
+    };
+  }
+
   Future<bool> add({
     required String title,
     required int distant,

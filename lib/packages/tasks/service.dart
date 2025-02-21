@@ -16,6 +16,17 @@ class TaskService extends Repository implements TaskInterface {
     if (coreModel.internet && coreModel.loggined) await refresh(userId: coreModel.userId);
   }
 
+  void importdb(Map<String, dynamic> db) {}
+
+  Map<String, dynamic> exportdb() {
+    return {
+      'economy': {},
+      'sport': {},
+      'tasks': {},
+      'timer': {},
+    };
+  }
+
   int get todayDateMilliseconds {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
