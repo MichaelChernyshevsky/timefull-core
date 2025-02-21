@@ -23,7 +23,7 @@ class TaskService extends Repository implements TaskInterface {
 
     Map<String, dynamic> db = {};
 
-    for (final task in tasks as List<TaskModel>) {
+    for (final task in tasks.tasks) {
       db[task.id.toString()] = {
         'userId': task.userId,
         'description': task.description,
