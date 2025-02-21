@@ -72,7 +72,6 @@ class TaskService extends Repository implements TaskInterface {
         countOnDay: '0',
         countOnTask: model.countOnTask.toString(),
       );
-      print(resp);
       if (resp) {
         await _isar.writeTxn(() async => _isar.taskModels.put(model));
       }
@@ -82,9 +81,9 @@ class TaskService extends Repository implements TaskInterface {
   }
 
   @override
-  Future<TasksModels> getTasks({required CoreModel coreModel}) async {
+  Future<TasksModels> getTasks({required CoreModel coreModel, required FilterRequestModel filter}) async {
     if (coreModel.internet && coreModel.loggined) {
-      final tasks = await repository.getTasksApi(userId: coreModel.userId);
+      final tasks = await repository.getTasksApi(userId: coreModel.userId, filter: filter);
       await _isar.writeTxn(() async {
         await _isar.taskModels.clear();
         await _isar.taskModels.putAll(tasks.tasks);

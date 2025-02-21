@@ -1,3 +1,4 @@
+import 'package:timefullcore/helpers/api/models/filter_model.dart';
 import 'package:timefullcore/helpers/common/repository.dart';
 import 'package:timefullcore/helpers/common/stateRepository.dart';
 import 'package:timefullcore/packages/tasks/model.dart';
@@ -52,8 +53,14 @@ class TaskRepository {
     return resp.message == MESSAGE_SUCCESS;
   }
 
-  Future<TasksModels> getTasksApi({required String userId}) async {
-    final BaseResponse resp = await httpService.post(getUri, data: {"userId": userId});
+  Future<TasksModels> getTasksApi({required String userId, required FilterRequestModel filter}) async {
+    final BaseResponse resp = await httpService.post(getUri, data: {
+      "userId": userId,
+      'dateFrom': filter.dateFrom,
+      'dateTo': filter.dateTo,
+      'page': filter.page,
+      'countOnPage': filter.countOnPage,
+    });
     return TasksModels.fromJson(resp.data);
   }
 

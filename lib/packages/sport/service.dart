@@ -1,4 +1,5 @@
 import 'package:timefullcore/core.dart';
+import 'package:timefullcore/helpers/api/models/filter_model.dart';
 import 'package:timefullcore/helpers/common/repository.dart';
 import 'package:timefullcore/model.dart';
 import 'package:timefullcore/packages/sport/model.dart';
@@ -30,8 +31,8 @@ class SportService extends Repository {
     return true;
   }
 
-  Future<SportModels> get({required CoreModel coreModel}) async {
-    final resp = await repository.get(coreModel.userId);
-    return (resp.data['sport'] as List).map((model) => SportModel.fromJson(model as Map<String, dynamic>)).toList();
+  Future<SportModels> get({required CoreModel coreModel, required FilterRequestModel filter}) async {
+    final resp = await repository.get(userId: coreModel.userId, filter: filter);
+    return (resp.message != 'unsuccess' && resp.data['sport'].length > 0) ? (resp.data['sport'] as List).map((model) => SportModel.fromJson(model as Map<String, dynamic>)).toList() : [];
   }
 }

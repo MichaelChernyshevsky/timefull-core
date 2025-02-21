@@ -1,8 +1,9 @@
+import 'package:timefullcore/helpers/api/models/filter_model.dart';
 import 'package:timefullcore/model.dart';
 import 'package:timefullcore/packages/tasks/model.dart';
 
 abstract class TaskInterface {
-  void getTasks({required CoreModel coreModel}) => TasksModels([]);
+  void getTasks({required CoreModel coreModel, required FilterRequestModel filter}) => TasksModels([]);
   void deleteTask({required int id, required CoreModel coreModel}) {}
   void editTask({required TaskModel model, required CoreModel coreModel}) {}
   void wipeTask({required CoreModel coreModel}) {}

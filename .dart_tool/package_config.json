@@ -668,10 +668,10 @@
       "languageVersion": "3.4"
     }
   ],
-  "generated": "2024-09-02T16:14:43.208697Z",
+  "generated": "2024-10-27T05:05:58.689518Z",
   "generator": "pub",
-  "generatorVersion": "3.5.1",
+  "generatorVersion": "3.5.3",
   "flutterRoot": "file:///Users/mihailcernysevskii/Development/flutter",
-  "flutterVersion": "3.24.1",
+  "flutterVersion": "3.24.3",
   "pubCache": "file:///Users/mihailcernysevskii/.pub-cache"
 }

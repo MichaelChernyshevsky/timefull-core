@@ -1,3 +1,4 @@
+import 'package:timefullcore/helpers/api/models/filter_model.dart';
 import 'package:timefullcore/helpers/common/repository.dart';
 import 'package:timefullcore/helpers/common/stateRepository.dart';
 import 'package:timefullcore/packages/economy/model.dart';
@@ -35,10 +36,14 @@ class EconomyRepository {
     return getStat(resp.message);
   }
 
-  Future<List<EconomyModel>> getEconomyApi({
-    required String userId,
-  }) async {
-    final BaseResponse resp = await httpService.post(economyGet, data: {"userId": userId});
+  Future<List<EconomyModel>> getEconomyApi({required String userId, required FilterRequestModel filter}) async {
+    final BaseResponse resp = await httpService.post(economyGet, data: {
+      "userId": userId,
+      'dateFrom': filter.dateFrom,
+      'dateTo': filter.dateTo,
+      'page': filter.page,
+      'countOnPage': filter.countOnPage,
+    });
     final List<EconomyModel> models = [];
     for (final element in resp.data['data']) {
       models.add(EconomyModel.fromJson(element));

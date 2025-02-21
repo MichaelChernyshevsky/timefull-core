@@ -1,3 +1,4 @@
+import 'package:timefullcore/helpers/api/models/filter_model.dart';
 import 'package:timefullcore/packages/sport/uri.dart';
 import 'package:timefullcore/core.dart';
 
@@ -29,7 +30,15 @@ class SportRepository {
     return resp.message == MESSAGE_SUCCESS ? null : null;
   }
 
-  Future<BaseResponse> get(String userId) async => httpService.post(sportGetUri, data: {
+  Future<BaseResponse> get({
+    required String userId,
+    required FilterRequestModel filter,
+  }) async =>
+      httpService.post(sportGetUri, data: {
         'userId': userId,
+        'dateFrom': filter.dateFrom,
+        'dateTo': filter.dateTo,
+        'page': filter.page,
+        'countOnPage': filter.countOnPage,
       });
 }

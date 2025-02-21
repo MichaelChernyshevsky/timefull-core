@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:timefullcore/helpers/api/models/filter_model.dart';
 import 'package:timefullcore/model.dart';
 
 CoreModel get coreModelWithout => CoreModel(
@@ -16,3 +17,5 @@ CoreModel get coreModelWith => CoreModel(
     );
 
 Future<String> get testDirectory async => (await Directory.systemTemp.createTemp('/')).path;
+
+FilterRequestModel get filter => FilterRequestModel(dateFrom: 0, dateTo: 17299764000000, page: 1, countOnPage: 100);

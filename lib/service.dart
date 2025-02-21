@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'package:flutter/foundation.dart';
+import 'package:timefullcore/helpers/api/models/filter_model.dart';
 import 'package:timefullcore/model.dart';
 import 'package:timefullcore/packages/economy/repository.dart';
 import 'package:timefullcore/packages/note/interface.dart';
@@ -303,8 +304,8 @@ class CoreService {
     return true;
   }
 
-  Future<TasksModels> getTasks() async {
-    final models = await taskService.getTasks(coreModel: coreModel);
+  Future<TasksModels> getTasks(FilterRequestModel filter) async {
+    final models = await taskService.getTasks(coreModel: coreModel, filter: filter);
     return models;
   }
 

@@ -28,7 +28,7 @@ void main() {
     });
 
     test("  get empty", () async {
-      final tasks = await taskRepo.getTasks(coreModel: coreModelWithout);
+      final tasks = await taskRepo.getTasks(coreModel: coreModelWithout, filter: filter);
       expect(tasks.tasks.isEmpty, true);
     });
 
@@ -40,26 +40,26 @@ void main() {
     });
 
     test("  get is not empty", () async {
-      final tasks = await taskRepo.getTasks(coreModel: coreModelWithout);
+      final tasks = await taskRepo.getTasks(coreModel: coreModelWithout, filter: filter);
       expect(tasks.tasks.isEmpty, false);
     });
 
     test("  mark", () async {
-      final task = (await taskRepo.getTasks(coreModel: coreModelWithout)).tasks[0];
+      final task = (await taskRepo.getTasks(coreModel: coreModelWithout, filter: filter)).tasks[0];
       await taskRepo.markTask(modelId: task.id!, coreModel: coreModelWithout);
-      final taskCheck = (await taskRepo.getTasks(coreModel: coreModelWithout)).tasks[0];
+      final taskCheck = (await taskRepo.getTasks(coreModel: coreModelWithout, filter: filter)).tasks[0];
       expect(taskCheck.countOnTaskDone, 1);
     });
     test("  unmark", () async {
-      final task = (await taskRepo.getTasks(coreModel: coreModelWithout)).tasks[0];
+      final task = (await taskRepo.getTasks(coreModel: coreModelWithout, filter: filter)).tasks[0];
       await taskRepo.unMarkTask(modelId: task.id!, coreModel: coreModelWithout);
-      final taskCheck = (await taskRepo.getTasks(coreModel: coreModelWithout)).tasks[0];
+      final taskCheck = (await taskRepo.getTasks(coreModel: coreModelWithout, filter: filter)).tasks[0];
       expect(taskCheck.countOnTaskDone, 0);
     });
     test("  edit", () async {
-      final task = (await taskRepo.getTasks(coreModel: coreModelWithout)).tasks[0];
+      final task = (await taskRepo.getTasks(coreModel: coreModelWithout, filter: filter)).tasks[0];
       await taskRepo.editTask(model: task.copyWith(countOnTask: 10), coreModel: coreModelWithout);
-      final taskCheck = (await taskRepo.getTasks(coreModel: coreModelWithout)).tasks[0];
+      final taskCheck = (await taskRepo.getTasks(coreModel: coreModelWithout, filter: filter)).tasks[0];
       expect(taskCheck.countOnTask, 10);
     });
   });
@@ -69,7 +69,7 @@ void main() {
 
     late int countTasks;
     test("  get", () async {
-      final tasks = await taskRepo.getTasks(coreModel: coreModelWith);
+      final tasks = await taskRepo.getTasks(coreModel: coreModelWith, filter: filter);
       countTasks = tasks.tasks.length;
       expect(tasks.tasks.isEmpty, false);
     });
@@ -80,7 +80,7 @@ void main() {
         model: TaskModel(
           description: 'description',
           title: 'title',
-          countOnTask: 1,
+          countOnTask: 40,
           countOnTaskDone: 1,
           countDoneTotal: 1,
           countUnDoneTotal: 1,
@@ -90,7 +90,7 @@ void main() {
     });
     late int idLast;
     test("  check value", () async {
-      final tasks = await taskRepo.getTasks(coreModel: coreModelWith);
+      final tasks = await taskRepo.getTasks(coreModel: coreModelWith, filter: filter);
       idLast = tasks.tasks[0].id!;
       expect(tasks.tasks.length > countTasks, true);
     });
