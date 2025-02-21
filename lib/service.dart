@@ -91,11 +91,11 @@ class CoreService {
     }
   }
 
-  Map<String, dynamic> exportdb() {
+  Future<Map<String, dynamic>> exportdb() async {
     return {
-      'economy': economyService.exportdb(),
+      'economy': await economyService.exportdb(),
       'sport': sportService.exportdb(),
-      'tasks': taskService.exportdb(),
+      'tasks': await taskService.exportdb(),
       'timer': timerService.exportdb(),
     };
   }

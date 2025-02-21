@@ -18,13 +18,25 @@ class TaskService extends Repository implements TaskInterface {
 
   void importdb(Map<String, dynamic> db) {}
 
-  Map<String, dynamic> exportdb() {
-    return {
-      'economy': {},
-      'sport': {},
-      'tasks': {},
-      'timer': {},
-    };
+  Future<Map<String, dynamic>> exportdb() async {
+    final TasksModels tasks = await getTasks(coreModel: CoreModel(loggined: false, internet: false, userId: '', isWeb: false));
+
+    Map<String, dynamic> db = {};
+
+    for (final task in tasks as List<TaskModel>) {
+      db[task.id.toString()] = {
+        'userId': task.userId,
+        'description': task.description,
+        'title': task.title,
+        'countOnTask': task.countOnTask,
+        'countOnTaskDone': task.countOnTaskDone,
+        'countDoneTotal': task.countDoneTotal,
+        'countUnDoneTotal': task.countUnDoneTotal,
+        'date': task.date,
+      };
+    }
+
+    return db;
   }
 
   int get todayDateMilliseconds {
@@ -92,8 +104,11 @@ class TaskService extends Repository implements TaskInterface {
   }
 
   @override
-  Future<TasksModels> getTasks({required CoreModel coreModel, required FilterRequestModel filter}) async {
-    if (coreModel.internet && coreModel.loggined) {
+  Future<TasksModels> getTasks({
+    required CoreModel coreModel,
+    FilterRequestModel? filter,
+  }) async {
+    if (coreModel.internet && coreModel.loggined && filter != null) {
       final tasks = await repository.getTasksApi(userId: coreModel.userId, filter: filter);
       await _isar.writeTxn(() async {
         await _isar.taskModels.clear();
