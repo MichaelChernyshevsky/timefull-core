@@ -35,13 +35,25 @@ class EconomyService extends Repository implements EconomyInterface {
 
   void importdb(Map<String, dynamic> db) {}
 
-  Map<String, dynamic> exportdb() {
-    return {
-      'economy': {},
-      'sport': {},
-      'tasks': {},
-      'timer': {},
-    };
+  Future<Map<String, dynamic>> exportdb() async {
+    final List<EconomyModel> models = await getEconomy(coreModel: CoreModel(loggined: false, internet: false, userId: '', isWeb: false));
+
+    Map<String, dynamic> db = {};
+
+    for (final model in models) {
+      db[model.id.toString()] = {
+        'title': model.title,
+        'count': model.count,
+        'income': model.income,
+        'description': model.description,
+        'type': model.type,
+        'date': model.date,
+        'userId': model.userId,
+        'active': model.active,
+      };
+    }
+
+    return db;
   }
 
   Future<bool> refresh({required CoreModel coreModel}) async {
