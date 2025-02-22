@@ -55,7 +55,7 @@ class PackagesService extends Repository implements PackagesInterface {
     } else if (type == 'note') {
       packages!.note = !packages!.note;
     } else if (type == 'sport') {
-      packages!.note = !packages!.sport;
+      packages!.sport = !packages!.sport;
     }
 
     await _isar.writeTxn(() async => await _isar.packages.clear());
