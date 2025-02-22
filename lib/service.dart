@@ -209,18 +209,6 @@ class CoreService {
     return packageService.changePackage(type: type, coreModel: coreModel);
   }
 
-  Future<Map<String, String>> packageGet() async {
-    final packages = await packageService.getPackages(coreModel: coreModel);
-
-    return {
-      'economy': packages.economy.toString(),
-      'timer': packages.timer.toString(),
-      'task': packages.task.toString(),
-      'note': packages.note.toString(),
-      'sport': packages.sport.toString(),
-    };
-  }
-
   // Future<PackagesInfo> packageInfo() async => packageRepo.infoPackagesApi();
   //
   //
