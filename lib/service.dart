@@ -209,9 +209,9 @@ class CoreService {
     return packageService.changePackage(type: type, coreModel: coreModel);
   }
 
-  Future<Map<String, dynamic>> getPackages() async {
+  Future<Packages> getPackages() async {
     final packages = await packageService.getPackages(coreModel: coreModel);
-    return packages.serialize();
+    return packages;
   }
 
   // Future<PackagesInfo> packageInfo() async => packageRepo.infoPackagesApi();
