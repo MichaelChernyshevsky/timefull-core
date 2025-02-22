@@ -211,7 +211,6 @@ class CoreService {
 
   Future<Map<String, dynamic>> getPackages() async {
     final packages = await packageService.getPackages(coreModel: coreModel);
-
     return packages.serialize();
   }
 
