@@ -217,6 +217,7 @@ class CoreService {
       'timer': packages.timer.toString(),
       'task': packages.task.toString(),
       'note': packages.note.toString(),
+      'sport': packages.sport.toString(),
     };
   }
 
