@@ -23,8 +23,8 @@ class Packages {
   });
 
   factory Packages.fromJson(Map<String, dynamic> json) => Packages(
-        id: json["id"] as int,
-        userId: json["userId"] as String,
+        id: json.containsKey('id') ? json["id"] as int : 0,
+        userId: json.containsKey('id') ? json["userId"] as String : "",
         economy: json["economy"] as bool,
         task: json["tasks"] as bool,
         timer: json["timer"] as bool,
