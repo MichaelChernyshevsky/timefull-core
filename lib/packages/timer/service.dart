@@ -57,6 +57,7 @@ class TimerService extends ChangeNotifier implements Repository {
     return {
       'economy': {},
       'sport': {},
+      'notes': {},
       'tasks': {},
       'timer': {},
     };

@@ -28,6 +28,7 @@ class PackagesService extends Repository implements PackagesInterface {
         timer: false,
         economy: false,
         note: false,
+        sport: false,
       );
       await _isar.writeTxn(() async => _isar.packages.put(form));
       packages = form;
@@ -52,6 +53,8 @@ class PackagesService extends Repository implements PackagesInterface {
     } else if (type == 'task') {
       packages!.task = !packages!.task;
     } else if (type == 'note') {
+      packages!.note = !packages!.note;
+    } else if (type == 'sport') {
       packages!.note = !packages!.note;
     }
 

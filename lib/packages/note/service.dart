@@ -16,6 +16,14 @@ class NoteService extends Repository implements NoteInterface {
     await _isar.writeTxn(() async => await _isar.pageModels.put(model));
   }
 
+  void importdb(Map<String, dynamic> db) {}
+
+  Future<Map<String, dynamic>> exportdb() async {
+    Map<String, dynamic> db = {};
+
+    return db;
+  }
+
   @override
   Future<List<NoteModel>> getNotesByPageId(Id pageId) async => await _isar.noteModels.filter().pageIdEqualTo(pageId).sortByPosition().findAll();
 

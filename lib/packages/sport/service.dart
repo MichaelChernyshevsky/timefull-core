@@ -22,6 +22,7 @@ class SportService extends Repository {
     return {
       'economy': {},
       'sport': {},
+      'notes': {},
       'tasks': {},
       'timer': {},
     };

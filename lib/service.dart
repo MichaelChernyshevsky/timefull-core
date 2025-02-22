@@ -84,6 +84,12 @@ class CoreService {
       throw Exception(' "tasks" not found in the database');
     }
 
+    if (db.containsKey('note')) {
+      noteService.importdb(db['sport']);
+    } else {
+      throw Exception(' "sport" not found in the database');
+    }
+
     if (db.containsKey('sport')) {
       sportService.importdb(db['sport']);
     } else {
@@ -196,6 +202,8 @@ class CoreService {
     } else if (type == 'task') {
       // packages!.task = !packages!.task;
     } else if (type == 'note') {
+      // packages!.task = !packages!.task;
+    } else if (type == 'sport') {
       // packages!.task = !packages!.task;
     }
     return packageService.changePackage(type: type, coreModel: coreModel);
