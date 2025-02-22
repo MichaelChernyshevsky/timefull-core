@@ -24,7 +24,7 @@ class Packages {
 
   factory Packages.fromJson(Map<String, dynamic> json) => Packages(
         id: json.containsKey('id') ? json["id"] as int : 0,
-        userId: json.containsKey('id') ? json["userId"] as String : "",
+        userId: json.containsKey('id') ? json["userId"] as String : '',
         economy: json["economy"] as bool,
         task: json["tasks"] as bool,
         timer: json["timer"] as bool,
