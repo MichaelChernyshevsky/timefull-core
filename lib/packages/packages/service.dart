@@ -50,12 +50,12 @@ class PackagesService extends Repository implements PackagesInterface {
       packages!.economy = !packages!.economy;
     } else if (type == 'timer') {
       packages!.timer = !packages!.timer;
-    } else if (type == 'task') {
+    } else if (type == 'tasks') {
       packages!.task = !packages!.task;
     } else if (type == 'note') {
       packages!.note = !packages!.note;
     } else if (type == 'sport') {
-      packages!.note = !packages!.note;
+      packages!.note = !packages!.sport;
     }
 
     await _isar.writeTxn(() async => await _isar.packages.clear());

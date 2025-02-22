@@ -199,7 +199,7 @@ class CoreService {
       // packages!.economy = !packages!.economy;
     } else if (type == 'timer') {
       // packages!.timer = !packages!.timer;
-    } else if (type == 'task') {
+    } else if (type == 'tasks') {
       // packages!.task = !packages!.task;
     } else if (type == 'note') {
       // packages!.task = !packages!.task;
