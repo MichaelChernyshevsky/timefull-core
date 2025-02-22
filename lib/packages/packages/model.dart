@@ -10,11 +10,13 @@ class Packages {
   bool task;
   bool timer;
   bool note;
+  bool sport;
 
   Packages({
     required this.economy,
     required this.id,
     required this.task,
+    required this.sport,
     required this.timer,
     required this.userId,
     required this.note,
@@ -26,6 +28,7 @@ class Packages {
         economy: json["economy"] as bool,
         task: json["tasks"] as bool,
         timer: json["timer"] as bool,
+        sport: json["sport"] as bool,
         note: json["note"] as bool,
       );
 
@@ -34,6 +37,7 @@ class Packages {
       'economy': economy,
       'tasks': task,
       'timer': timer,
+      'sport': sport,
       'note': note,
     };
   }

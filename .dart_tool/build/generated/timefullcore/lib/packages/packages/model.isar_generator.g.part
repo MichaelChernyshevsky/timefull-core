@@ -23,18 +23,23 @@ const PackagesSchema = CollectionSchema(
       name: r'note',
       type: IsarType.bool,
     ),
-    r'task': PropertySchema(
+    r'sport': PropertySchema(
       id: 2,
+      name: r'sport',
+      type: IsarType.bool,
+    ),
+    r'task': PropertySchema(
+      id: 3,
       name: r'task',
       type: IsarType.bool,
     ),
     r'timer': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'timer',
       type: IsarType.bool,
     ),
     r'userId': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'userId',
       type: IsarType.string,
     )
@@ -71,9 +76,10 @@ void _packagesSerialize(
 ) {
   writer.writeBool(offsets[0], object.economy);
   writer.writeBool(offsets[1], object.note);
-  writer.writeBool(offsets[2], object.task);
-  writer.writeBool(offsets[3], object.timer);
-  writer.writeString(offsets[4], object.userId);
+  writer.writeBool(offsets[2], object.sport);
+  writer.writeBool(offsets[3], object.task);
+  writer.writeBool(offsets[4], object.timer);
+  writer.writeString(offsets[5], object.userId);
 }
 
 Packages _packagesDeserialize(
@@ -86,9 +92,10 @@ Packages _packagesDeserialize(
     economy: reader.readBool(offsets[0]),
     id: id,
     note: reader.readBool(offsets[1]),
-    task: reader.readBool(offsets[2]),
-    timer: reader.readBool(offsets[3]),
-    userId: reader.readString(offsets[4]),
+    sport: reader.readBool(offsets[2]),
+    task: reader.readBool(offsets[3]),
+    timer: reader.readBool(offsets[4]),
+    userId: reader.readString(offsets[5]),
   );
   return object;
 }
@@ -109,6 +116,8 @@ P _packagesDeserializeProp<P>(
     case 3:
       return (reader.readBool(offset)) as P;
     case 4:
+      return (reader.readBool(offset)) as P;
+    case 5:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -271,6 +280,16 @@ extension PackagesQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'note',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Packages, Packages, QAfterFilterCondition> sportEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sport',
         value: value,
       ));
     });
@@ -458,6 +477,18 @@ extension PackagesQuerySortBy on QueryBuilder<Packages, Packages, QSortBy> {
     });
   }
 
+  QueryBuilder<Packages, Packages, QAfterSortBy> sortBySport() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sport', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Packages, Packages, QAfterSortBy> sortBySportDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sport', Sort.desc);
+    });
+  }
+
   QueryBuilder<Packages, Packages, QAfterSortBy> sortByTask() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'task', Sort.asc);
@@ -533,6 +564,18 @@ extension PackagesQuerySortThenBy
     });
   }
 
+  QueryBuilder<Packages, Packages, QAfterSortBy> thenBySport() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sport', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Packages, Packages, QAfterSortBy> thenBySportDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sport', Sort.desc);
+    });
+  }
+
   QueryBuilder<Packages, Packages, QAfterSortBy> thenByTask() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'task', Sort.asc);
@@ -584,6 +627,12 @@ extension PackagesQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Packages, Packages, QDistinct> distinctBySport() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sport');
+    });
+  }
+
   QueryBuilder<Packages, Packages, QDistinct> distinctByTask() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'task');
@@ -621,6 +670,12 @@ extension PackagesQueryProperty
   QueryBuilder<Packages, bool, QQueryOperations> noteProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'note');
+    });
+  }
+
+  QueryBuilder<Packages, bool, QQueryOperations> sportProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sport');
     });
   }
 
