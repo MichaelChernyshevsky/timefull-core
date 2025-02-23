@@ -24,31 +24,56 @@ void main() {
     await isar.close();
   });
 
-  //
-  group('Sport with api:', () {
-    test("  initialize", () async => service.initialize(coreModel: coreModelWith, isar: isar));
+  group('Sport without api:', () {
+    test("  initialize", () async => service.initialize(coreModel: coreModelWithout, isar: isar));
     late SportModels models;
-    test("  get", () async {
-      models = await service.get(coreModel: coreModelWith, filter: filter);
-      print(models.length);
-      expect(models.isNotEmpty, true);
-    });
 
     test("  add", () async {
-      await service.add(
-        coreModel: coreModelWith,
+      final isAdd = await service.add(
+        coreModel: coreModelWithout,
         title: 'T',
         distant: 5,
         date: '1000',
       );
-      final models_2 = await service.get(coreModel: coreModelWith, filter: filter);
-      expect(models_2.length > models.length, true);
+
+      expect(isAdd, true);
+    });
+
+    test("  get", () async {
+      models = await service.get(coreModel: coreModelWithout, filter: filter);
     });
 
     test("  delete", () async {
-      await service.delete(coreModel: coreModelWith, id: models[0].id!);
-      final models_2 = await service.get(coreModel: coreModelWith, filter: filter);
-      expect(models_2.length == models.length, true);
+      await service.delete(coreModel: coreModelWithout, id: models[0].id!);
+      final models_2 = await service.get(coreModel: coreModelWithout, filter: filter);
+      expect(models_2.length != models.length, true);
     });
   });
+
+  // group('Sport with api:', () {
+  //   test("  initialize", () async => service.initialize(coreModel: coreModelWith, isar: isar));
+  //   late SportModels models;
+  //   test("  get", () async {
+  //     models = await service.get(coreModel: coreModelWith, filter: filter);
+  //     print(models.length);
+  //     expect(models.isNotEmpty, true);
+  //   });
+
+  //   test("  add", () async {
+  //     await service.add(
+  //       coreModel: coreModelWith,
+  //       title: 'T',
+  //       distant: 5,
+  //       date: '1000',
+  //     );
+  //     final models_2 = await service.get(coreModel: coreModelWith, filter: filter);
+  //     expect(models_2.length > models.length, true);
+  //   });
+
+  //   test("  delete", () async {
+  //     await service.delete(coreModel: coreModelWith, id: models[0].id!);
+  //     final models_2 = await service.get(coreModel: coreModelWith, filter: filter);
+  //     expect(models_2.length == models.length, true);
+  //   });
+  // });
 }

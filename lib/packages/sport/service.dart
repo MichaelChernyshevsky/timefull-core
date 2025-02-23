@@ -42,7 +42,7 @@ class SportService extends Repository {
   }
 
   Future<bool> delete({required int id, required CoreModel coreModel}) async {
-    await _isar.writeTxn(() async => await _isar.economyModels.delete(id));
+    await _isar.writeTxn(() async => await _isar.sportModels.delete(id));
     return true;
   }
 
