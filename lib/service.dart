@@ -232,7 +232,7 @@ class CoreService {
     return true;
   }
 
-  Future<TasksModels> getTasks(FilterRequestModel filter) async {
+  Future<TasksModels> getTasks(FilterRequestModel? filter) async {
     final models = await taskService.getTasks(coreModel: coreModel, filter: filter);
     return models;
   }
