@@ -43,7 +43,15 @@ class CoreService {
     await Isar.initializeIsarCore(download: true);
     if (shema == true) {
       isar = await Isar.open(
-        [economyService.shemaEconomy, timerService.shemaTimer, userService.shemaUser, packageService.shemaPackages, taskService.shemaTask, noteService.shemaNote, noteService.shemaPage],
+        [
+          economyService.shemaEconomy,
+          timerService.shemaTimer,
+          userService.shemaUser,
+          packageService.shemaPackages,
+          taskService.shemaTask,
+          noteService.shemaNote,
+          sportService.shemaSport,
+        ],
         directory: location ?? await localPath,
       );
     }
