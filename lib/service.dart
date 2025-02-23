@@ -217,8 +217,8 @@ class CoreService {
   Future<void> actionTimer() async => timerService.action(userId: userId, loggined: loggined, internet: false);
 
   //  Tasks
-  Future<bool> deleteTask({required int id}) async {
-    await taskService.deleteTask(id: id, coreModel: coreModel);
+  Future<bool> deleteTask({required List<int> ids}) async {
+    await taskService.deleteTask(ids: ids, coreModel: coreModel);
     return true;
   }
 

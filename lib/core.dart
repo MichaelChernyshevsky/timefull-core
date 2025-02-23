@@ -11,7 +11,7 @@ export 'package:timefullcore/helpers/common/stateRepository.dart';
 export 'package:timefullcore/packages/packages/interface.dart';
 export 'package:timefullcore/packages/packages/model.dart';
 export 'package:timefullcore/packages/packages/uri.dart';
-export 'package:timefullcore/packages/tasks/interface.dart';
+
 export 'package:timefullcore/packages/tasks/model.dart';
 export 'package:timefullcore/packages/tasks/uri.dart';
 export 'package:timefullcore/packages/timer/func.dart';

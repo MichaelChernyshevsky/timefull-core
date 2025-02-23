@@ -1,6 +1,6 @@
 part of '../../service.dart';
 
-class TaskService extends Repository implements TaskInterface {
+class TaskService extends Repository {
   final TaskRepository repository;
   late Isar _isar;
 
@@ -73,8 +73,8 @@ class TaskService extends Repository implements TaskInterface {
       });
 
   @override
-  Future<void> deleteTask({required int id, required CoreModel coreModel}) async {
-    await _isar.writeTxn(() async => await _isar.economyModels.delete(id));
+  Future<void> deleteTask({required List<int> ids, required CoreModel coreModel}) async {
+    await _isar.writeTxn(() async => await _isar.economyModels.deleteAll(ids));
   }
 
   @override
