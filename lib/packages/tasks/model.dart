@@ -30,6 +30,7 @@ class TaskModel {
   int countDoneTotal;
   int countUnDoneTotal;
   String? tag;
+  String? note;
   int? date;
 
   TaskModel({
@@ -37,6 +38,7 @@ class TaskModel {
     this.date,
     this.userId,
     this.tag,
+    this.note,
     required this.description,
     required this.title,
     required this.countOnTask,
@@ -48,6 +50,7 @@ class TaskModel {
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(
         id: json["id"],
         tag: json["tag"],
+        note: json["note"],
         countOnTask: json["countOnTask"],
         date: int.parse(json["date"]),
         description: json["description"] as String,
@@ -63,6 +66,7 @@ class TaskModel {
         "countOnTask": countOnTask,
         "date": date,
         "tag": tag,
+        "note": note,
         "description": description,
         "title": title,
         "userId": userId,
@@ -81,10 +85,12 @@ class TaskModel {
     int? countDoneTotal,
     int? countUnDoneTotal,
     String? tag,
+    String? note,
   }) {
     return TaskModel(
       id: id ?? this.id,
       tag: tag ?? this.tag,
+      note: note ?? this.note,
       date: date ?? this.date,
       userId: userId ?? this.userId,
       description: description ?? this.description,
