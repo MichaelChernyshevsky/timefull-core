@@ -2,12 +2,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:timefullcore/helpers/api/models/filter_model.dart';
 import 'package:timefullcore/model.dart';
-import 'package:timefullcore/packages/economy/repository.dart';
 import 'package:timefullcore/packages/note/interface.dart';
 import 'package:timefullcore/packages/note/models/model.dart';
 import 'package:timefullcore/packages/note/models/note_model/model.dart';
 import 'package:timefullcore/packages/note/models/page_model/model.dart';
 import 'package:timefullcore/packages/packages/service.dart';
+import 'package:timefullcore/packages/sport/model.dart';
 import 'package:timefullcore/packages/sport/service.dart';
 import 'package:timefullcore/packages/tasks/repository.dart';
 import 'package:timefullcore/packages/timer/repository.dart';
@@ -53,6 +53,7 @@ class CoreService {
     packageService.initialize(coreModel: coreModel, isar: isar);
     taskService.initialize(coreModel: coreModel, isar: isar);
     noteService.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
+    sportService.initialize(coreModel: coreModel, isar: isar);
   }
 
   Future<void> close() async {
@@ -107,32 +108,7 @@ class CoreService {
   }
 
   CoreModel get coreModel => CoreModel(loggined: false, internet: false, userId: '', isWeb: kIsWeb);
-
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   //  User
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   Future<RepositoryStat> userEdit({
     String? name,
     String? name2,
@@ -169,31 +145,8 @@ class CoreService {
   bool get loggined => userService.loggined;
 
   String get userId => userService.userId;
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
+
   //   Package
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   Future<bool> packageChange({required String type}) async {
     if (type == 'economy') {
       // packages!.economy = !packages!.economy;
@@ -215,32 +168,8 @@ class CoreService {
   }
 
   // Future<PackagesInfo> packageInfo() async => packageRepo.infoPackagesApi();
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //  Economy
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
 
+  //  Economy
   Future<bool> deleteEconomy({required String id}) async {
     return true;
   }
@@ -272,60 +201,12 @@ class CoreService {
 
   Future<List<String>> get listTypesEconomy async => economyService.listTypes;
 
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   //  Timer
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   Future<bool> wipeTimer() async => timerService.wipe();
 
   Future<void> actionTimer() async => timerService.action(userId: userId, loggined: loggined, internet: false);
 
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   //  Tasks
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-
   Future<bool> deleteTask({required int id}) async {
     await taskService.deleteTask(id: id, coreModel: coreModel);
     return true;
@@ -351,31 +232,7 @@ class CoreService {
     return true;
   }
 
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   //  Note
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   Future<void> addNote(NoteModel model) async => noteService.addNote(model);
   Future<void> addNoteAfterParent(NoteModel model) async => noteService.addNoteAfterParent(model);
 
@@ -393,4 +250,21 @@ class CoreService {
   Future<PageWithNotes> getPageById(Id pageId) async => noteService.getPageById(pageId);
 
   List<String> get suffics => noteService.suffics;
+
+  //  Sport
+  Future<bool> deleteSport({required int id}) async => sportService.delete(coreModel: coreModel, id: id);
+
+  Future<Future<bool>> addSport({
+    required String title,
+    required int distant,
+    required String date,
+  }) async =>
+      sportService.add(
+        coreModel: coreModel,
+        title: title,
+        distant: distant,
+        date: date,
+      );
+
+  Future<SportModels> getSport({FilterRequestModel? filter}) async => sportService.get(coreModel: coreModel, filter: filter);
 }

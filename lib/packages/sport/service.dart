@@ -34,17 +34,20 @@ class SportService extends Repository {
     required String date,
     required CoreModel coreModel,
   }) async {
-    final resp = await repository.add(userId: coreModel.userId, title: title, distant: distant, date: date);
+    if (coreModel.internet && coreModel.loggined) {
+      final resp = await repository.add(userId: coreModel.userId, title: title, distant: distant, date: date);
+    }
+    await _isar.writeTxn(() async => _isar.sportModels.put(SportModel(date: date, distant: distant, id: DateTime.now().millisecondsSinceEpoch, title: title, userId: coreModel.userId)));
     return true;
   }
 
   Future<bool> delete({required int id, required CoreModel coreModel}) async {
-    final resp = await repository.delete(userId: coreModel.userId, id: id);
+    await _isar.writeTxn(() async => await _isar.economyModels.delete(id));
     return true;
   }
 
-  Future<SportModels> get({required CoreModel coreModel, required FilterRequestModel filter}) async {
-    final resp = await repository.get(userId: coreModel.userId, filter: filter);
-    return (resp.message != 'unsuccess' && resp.data['sport'].length > 0) ? (resp.data['sport'] as List).map((model) => SportModel.fromJson(model as Map<String, dynamic>)).toList() : [];
+  Future<SportModels> get({required CoreModel coreModel, required FilterRequestModel? filter}) async {
+    final models = await _isar.sportModels.where().findAll();
+    return models;
   }
 }
