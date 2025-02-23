@@ -72,17 +72,14 @@ class TaskService extends Repository {
         }
       });
 
-  @override
   Future<void> deleteTask({required List<int> ids, required CoreModel coreModel}) async {
     await _isar.writeTxn(() async => await _isar.economyModels.deleteAll(ids));
   }
 
-  @override
   Future<void> editTask({required TaskModel model, required CoreModel coreModel}) async {
     await _isar.writeTxn(() async => await _isar.taskModels.put(model));
   }
 
-  @override
   Future<void> addTask({required TaskModel model, required CoreModel coreModel}) async {
     model.id ??= DateTime.now().millisecondsSinceEpoch;
     model.date ??= todayDateMilliseconds;

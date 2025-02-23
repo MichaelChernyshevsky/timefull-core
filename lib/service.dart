@@ -232,6 +232,16 @@ class CoreService {
     return true;
   }
 
+  Future<bool> markTask({required int modelId}) async {
+    await taskService.markTask(modelId: modelId, coreModel: coreModel);
+    return true;
+  }
+
+  Future<bool> unMarkTask({required int modelId}) async {
+    await taskService.unMarkTask(modelId: modelId, coreModel: coreModel);
+    return true;
+  }
+
   Future<TasksModels> getTasks({FilterRequestModel? filter}) async {
     final models = await taskService.getTasks(coreModel: coreModel, filter: filter);
     return models;
