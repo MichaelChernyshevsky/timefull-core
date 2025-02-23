@@ -15,6 +15,8 @@ class TasksModels {
 
     return TasksModels(tasks);
   }
+
+  TasksModels add(TasksModels model) => TasksModels(tasks + model.tasks);
 }
 
 @collection
@@ -45,7 +47,7 @@ class TaskModel {
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(
         id: json["id"],
-        tag : json["tag"],
+        tag: json["tag"],
         countOnTask: json["countOnTask"],
         date: int.parse(json["date"]),
         description: json["description"] as String,
@@ -60,7 +62,7 @@ class TaskModel {
         "id": id,
         "countOnTask": countOnTask,
         "date": date,
-        "tag" : tag,
+        "tag": tag,
         "description": description,
         "title": title,
         "userId": userId,
