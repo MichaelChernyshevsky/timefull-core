@@ -154,6 +154,8 @@ class CoreService {
 
   String get userId => userService.userId;
 
+  Future<bool> supportMessage({required String message}) => userService.supportMessage(message: message);
+
   //   Package
   Future<bool> packageChange({required String type}) async {
     if (type == 'economy') {

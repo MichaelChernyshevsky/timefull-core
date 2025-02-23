@@ -66,4 +66,6 @@ class UserService extends Repository {
         email: email,
         password: password,
       );
+
+  Future<bool> supportMessage({required String message}) async => true;
 }
