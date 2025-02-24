@@ -67,6 +67,7 @@ class CoreService {
     taskService.initialize(coreModel: coreModel, isar: isar);
     noteService.initialize(internet: false, loggined: loggined, userId: userId, isar: isar);
     sportService.initialize(coreModel: coreModel, isar: isar);
+    styleService.initialize(coreModel: coreModel, isar: isar);
   }
 
   Future<void> close() async {
@@ -120,9 +121,9 @@ class CoreService {
     return {
       'economy': await economyService.exportdb(),
       'sport': await sportService.exportdb(),
+      'style': await styleService.exportdb(),
       'tasks': await taskService.exportdb(),
       'timer': timerService.exportdb(),
-      'style': await styleService.exportdb(),
     };
   }
 
