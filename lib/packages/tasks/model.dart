@@ -30,7 +30,7 @@ class TaskModel {
   int countDoneTotal;
   int countUnDoneTotal;
   String? tag;
-  String? note;
+  String? styleId;
   int? date;
 
   TaskModel({
@@ -38,7 +38,7 @@ class TaskModel {
     this.date,
     this.userId,
     this.tag,
-    this.note,
+    this.styleId,
     required this.description,
     required this.title,
     required this.countOnTask,
@@ -50,12 +50,12 @@ class TaskModel {
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(
         id: json["id"],
         tag: json["tag"],
-        note: json["note"],
         countOnTask: json["countOnTask"],
         date: int.parse(json["date"]),
         description: json["description"] as String,
         title: json["title"] as String,
         userId: json["userId"] as String,
+        styleId: json['styleId'] as String,
         countDoneTotal: int.parse(json["countDone"] ?? '0'),
         countUnDoneTotal: int.parse(json["countUnDone"] ?? '0'),
         countOnTaskDone: int.parse(json["countOnTaskDone"] ?? '0'),
@@ -66,31 +66,20 @@ class TaskModel {
         "countOnTask": countOnTask,
         "date": date,
         "tag": tag,
-        "note": note,
         "description": description,
         "title": title,
         "userId": userId,
+        'styleId': styleId,
         "countDoneTotal": countDoneTotal,
         "countUnDoneTotal": countUnDoneTotal,
       };
 
-  TaskModel copyWith({
-    Id? id,
-    int? date,
-    String? userId,
-    String? description,
-    String? title,
-    int? countOnTask,
-    int? countOnTaskDone,
-    int? countDoneTotal,
-    int? countUnDoneTotal,
-    String? tag,
-    String? note,
-  }) {
+  TaskModel copyWith(
+      {Id? id, int? date, String? userId, String? description, String? title, int? countOnTask, int? countOnTaskDone, int? countDoneTotal, int? countUnDoneTotal, String? tag, String? styleId}) {
     return TaskModel(
       id: id ?? this.id,
       tag: tag ?? this.tag,
-      note: note ?? this.note,
+      styleId: styleId ?? this.styleId,
       date: date ?? this.date,
       userId: userId ?? this.userId,
       description: description ?? this.description,

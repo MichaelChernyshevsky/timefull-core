@@ -47,9 +47,9 @@ const TaskModelSchema = CollectionSchema(
       name: r'description',
       type: IsarType.string,
     ),
-    r'note': PropertySchema(
+    r'styleId': PropertySchema(
       id: 6,
-      name: r'note',
+      name: r'styleId',
       type: IsarType.string,
     ),
     r'tag': PropertySchema(
@@ -90,7 +90,7 @@ int _taskModelEstimateSize(
   var bytesCount = offsets.last;
   bytesCount += 3 + object.description.length * 3;
   {
-    final value = object.note;
+    final value = object.styleId;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -123,7 +123,7 @@ void _taskModelSerialize(
   writer.writeLong(offsets[3], object.countUnDoneTotal);
   writer.writeLong(offsets[4], object.date);
   writer.writeString(offsets[5], object.description);
-  writer.writeString(offsets[6], object.note);
+  writer.writeString(offsets[6], object.styleId);
   writer.writeString(offsets[7], object.tag);
   writer.writeString(offsets[8], object.title);
   writer.writeString(offsets[9], object.userId);
@@ -143,7 +143,7 @@ TaskModel _taskModelDeserialize(
     date: reader.readLongOrNull(offsets[4]),
     description: reader.readString(offsets[5]),
     id: id,
-    note: reader.readStringOrNull(offsets[6]),
+    styleId: reader.readStringOrNull(offsets[6]),
     tag: reader.readStringOrNull(offsets[7]),
     title: reader.readString(offsets[8]),
     userId: reader.readStringOrNull(offsets[9]),
@@ -768,36 +768,36 @@ extension TaskModelQueryFilter
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteIsNull() {
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'note',
+        property: r'styleId',
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteIsNotNull() {
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'note',
+        property: r'styleId',
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteEqualTo(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'note',
+        property: r'styleId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteGreaterThan(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -805,14 +805,14 @@ extension TaskModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'note',
+        property: r'styleId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteLessThan(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -820,14 +820,14 @@ extension TaskModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'note',
+        property: r'styleId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteBetween(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -836,7 +836,7 @@ extension TaskModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'note',
+        property: r'styleId',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -846,69 +846,70 @@ extension TaskModelQueryFilter
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteStartsWith(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'note',
+        property: r'styleId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteEndsWith(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'note',
+        property: r'styleId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteContains(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdContains(
       String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'note',
+        property: r'styleId',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteMatches(
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'note',
+        property: r'styleId',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteIsEmpty() {
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> styleIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'note',
+        property: r'styleId',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition> noteIsNotEmpty() {
+  QueryBuilder<TaskModel, TaskModel, QAfterFilterCondition>
+      styleIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'note',
+        property: r'styleId',
         value: '',
       ));
     });
@@ -1417,15 +1418,15 @@ extension TaskModelQuerySortBy on QueryBuilder<TaskModel, TaskModel, QSortBy> {
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByNote() {
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByStyleId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'note', Sort.asc);
+      return query.addSortBy(r'styleId', Sort.asc);
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByNoteDesc() {
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> sortByStyleIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'note', Sort.desc);
+      return query.addSortBy(r'styleId', Sort.desc);
     });
   }
 
@@ -1553,15 +1554,15 @@ extension TaskModelQuerySortThenBy
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByNote() {
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByStyleId() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'note', Sort.asc);
+      return query.addSortBy(r'styleId', Sort.asc);
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByNoteDesc() {
+  QueryBuilder<TaskModel, TaskModel, QAfterSortBy> thenByStyleIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'note', Sort.desc);
+      return query.addSortBy(r'styleId', Sort.desc);
     });
   }
 
@@ -1641,10 +1642,10 @@ extension TaskModelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TaskModel, TaskModel, QDistinct> distinctByNote(
+  QueryBuilder<TaskModel, TaskModel, QDistinct> distinctByStyleId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'note', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'styleId', caseSensitive: caseSensitive);
     });
   }
 
@@ -1714,9 +1715,9 @@ extension TaskModelQueryProperty
     });
   }
 
-  QueryBuilder<TaskModel, String?, QQueryOperations> noteProperty() {
+  QueryBuilder<TaskModel, String?, QQueryOperations> styleIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'note');
+      return query.addPropertyName(r'styleId');
     });
   }
 

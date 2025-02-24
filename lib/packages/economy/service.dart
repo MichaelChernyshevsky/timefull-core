@@ -8,7 +8,7 @@ class EconomyService extends Repository implements EconomyInterface {
   final EconomyRepository repository;
   late Isar _isar;
 
-  CollectionSchema get shemaEconomy => EconomyModelSchema;
+  CollectionSchema get shema => EconomyModelSchema;
 
   EconomyService({required super.httpService}) : repository = EconomyRepository(httpService: httpService);
 
@@ -33,7 +33,22 @@ class EconomyService extends Repository implements EconomyInterface {
     }
   }
 
-  void importdb(Map<String, dynamic> db) {}
+  Future<void> importdb(Map<String, dynamic> db) async {
+    await _isar.writeTxn(() async => await _isar.economyModels.where().deleteAll());
+    for (final key in db.keys) {
+      await addEconomy(
+        userId: db[key]["userId"],
+        id: db[key]["id"],
+        title: db[key]["title"],
+        type: db[key]["type"] ?? '',
+        active: db[key]["active"],
+        description: db[key]["description"] ?? '',
+        count: int.parse(db[key]["count"]),
+        income: db[key]["income"],
+        styleId: db[key]["styleId"],
+      );
+    }
+  }
 
   Future<Map<String, dynamic>> exportdb() async {
     final List<EconomyModel> models = await getEconomy(coreModel: CoreModel(loggined: false, internet: false, userId: '', isWeb: false));
@@ -50,6 +65,7 @@ class EconomyService extends Repository implements EconomyInterface {
         'date': model.date,
         'userId': model.userId,
         'active': model.active,
+        'styleId': model.styleId,
       };
     }
 
@@ -98,28 +114,32 @@ class EconomyService extends Repository implements EconomyInterface {
     required String description,
     required int count,
     required bool income,
-    required CoreModel coreModel,
+    CoreModel? coreModel,
+    String? userId,
+    int? id,
     String? date,
+    bool? active,
+    String? styleId,
   }) async {
     Future<void> save() async {
       await _isar.writeTxn(() async {
         final newEconomy = EconomyModel(
-          id: DateTime.now().millisecondsSinceEpoch,
-          title: title,
-          type: type,
-          count: count.toString(),
-          income: true,
-          description: description,
-          date: date != null ? int.parse(date) : null,
-          userId: coreModel.userId,
-          active: true,
-        );
+            id: id ?? DateTime.now().millisecondsSinceEpoch,
+            title: title,
+            type: type,
+            count: count.toString(),
+            income: true,
+            description: description,
+            date: date != null ? int.parse(date) : null,
+            userId: userId ?? coreModel!.userId,
+            active: active ?? true,
+            styleId: styleId);
         await _isar.economyModels.put(newEconomy);
       });
     }
 
     try {
-      if (coreModel.internet && coreModel.loggined) {
+      if (coreModel != null && coreModel.internet && coreModel.loggined) {
         final state = await repository.addEconomyApi(
           count: count,
           title: title,

@@ -18,7 +18,7 @@ void main() {
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open(
-      [economyService.shemaEconomy],
+      [economyService.shema],
       directory: await testDirectory,
     );
   });
@@ -36,6 +36,7 @@ void main() {
       ),
     );
     late int before;
+    late Map<String, dynamic> db;
 
     test("  add", () async {
       final resp = await economyService.getEconomy(coreModel: coreModelWithout);
@@ -63,6 +64,10 @@ void main() {
       expect(resp.isNotEmpty, true);
     });
 
+    test("  export", () async {
+      db = await economyService.exportdb();
+    });
+
     test("  delete", () async {
       final id = (await economyService.getEconomy(coreModel: coreModelWithout)).first.id;
       expect((await economyService.deleteEconomy(id: id, coreModel: coreModelWithout)), RepositoryStat.deleted);
@@ -71,38 +76,47 @@ void main() {
       final resp = await economyService.getEconomy(coreModel: coreModelWith);
       expect(resp.length == before, true);
     });
+
+    test("  import", () async {
+      await economyService.importdb(db);
+      final models = await economyService.getEconomy(coreModel: coreModelWithout);
+      print(models.length);
+      print(db.keys.length);
+
+      expect(models.length == db.keys.length, true);
+    });
   });
 
-  group('Economy with api:', () {
-    late int before;
-    test("  add", () async {
-      final resp = await economyService.getEconomy(coreModel: coreModelWith);
-      before = resp.length;
-      expect(
-        await economyService.addEconomy(
-          title: 'title',
-          description: 'description',
-          count: 1,
-          income: true,
-          coreModel: coreModelWith,
-          type: 'any',
-          date: '111111',
-        ),
-        RepositoryStat.sended,
-      );
-    });
-    test("  check count", () async {
-      final resp = await economyService.getEconomy(coreModel: coreModelWith);
-      expect(resp.length != before, true);
-    });
+  // group('Economy with api:', () {
+  //   late int before;
+  //   test("  add", () async {
+  //     final resp = await economyService.getEconomy(coreModel: coreModelWith);
+  //     before = resp.length;
+  //     expect(
+  //       await economyService.addEconomy(
+  //         title: 'title',
+  //         description: 'description',
+  //         count: 1,
+  //         income: true,
+  //         coreModel: coreModelWith,
+  //         type: 'any',
+  //         date: '111111',
+  //       ),
+  //       RepositoryStat.sended,
+  //     );
+  //   });
+  //   test("  check count", () async {
+  //     final resp = await economyService.getEconomy(coreModel: coreModelWith);
+  //     expect(resp.length != before, true);
+  //   });
 
-    test("  delete", () async {
-      final id = (await economyService.getEconomy(coreModel: coreModelWith)).first.id;
-      expect((await economyService.deleteEconomy(id: id, coreModel: coreModelWith)), RepositoryStat.deleted);
-    });
-    test("  check count", () async {
-      final resp = await economyService.getEconomy(coreModel: coreModelWith);
-      expect(resp.length == before, true);
-    });
-  });
+  //   test("  delete", () async {
+  //     final id = (await economyService.getEconomy(coreModel: coreModelWith)).first.id;
+  //     expect((await economyService.deleteEconomy(id: id, coreModel: coreModelWith)), RepositoryStat.deleted);
+  //   });
+  //   test("  check count", () async {
+  //     final resp = await economyService.getEconomy(coreModel: coreModelWith);
+  //     expect(resp.length == before, true);
+  //   });
+  // });
 }

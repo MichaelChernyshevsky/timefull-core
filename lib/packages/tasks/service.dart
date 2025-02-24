@@ -6,7 +6,7 @@ class TaskService extends Repository {
 
   TaskService({required super.httpService}) : repository = TaskRepository(httpService: httpService);
 
-  CollectionSchema get shemaTask => TaskModelSchema;
+  CollectionSchema get shema => TaskModelSchema;
 
   Future<void> initialize({
     required CoreModel coreModel,

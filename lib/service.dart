@@ -9,6 +9,8 @@ import 'package:timefullcore/packages/note/models/page_model/model.dart';
 import 'package:timefullcore/packages/packages/service.dart';
 import 'package:timefullcore/packages/sport/model.dart';
 import 'package:timefullcore/packages/sport/service.dart';
+import 'package:timefullcore/packages/styles/model.dart';
+import 'package:timefullcore/packages/styles/service.dart';
 import 'package:timefullcore/packages/tasks/repository.dart';
 import 'package:timefullcore/packages/timer/repository.dart';
 import 'package:timefullcore/packages/user/repository.dart';
@@ -29,6 +31,7 @@ class CoreService {
   late TaskService taskService;
   late NoteService noteService;
   late SportService sportService;
+  late StyleService styleService;
   late Isar isar;
 
   Future<void> initialize({String? location, bool? shema}) async {
@@ -40,17 +43,19 @@ class CoreService {
     taskService = TaskService(httpService: httpService);
     noteService = NoteService(httpService: httpService);
     sportService = SportService(httpService: httpService);
+    styleService = StyleService(httpService: httpService);
     await Isar.initializeIsarCore(download: true);
     if (shema == true) {
       isar = await Isar.open(
         [
-          economyService.shemaEconomy,
-          timerService.shemaTimer,
-          userService.shemaUser,
-          packageService.shemaPackages,
-          taskService.shemaTask,
+          economyService.shema,
+          timerService.shema,
+          userService.shema,
+          styleService.shema,
+          packageService.shema,
+          taskService.shema,
           noteService.shemaNote,
-          sportService.shemaSport,
+          sportService.shema,
         ],
         directory: location ?? await localPath,
       );
@@ -104,14 +109,20 @@ class CoreService {
     } else {
       throw Exception(' "sport" not found in the database');
     }
+    if (db.containsKey('style')) {
+      styleService.importdb(db['style']);
+    } else {
+      throw Exception(' "style" not found in the database');
+    }
   }
 
   Future<Map<String, dynamic>> exportdb() async {
     return {
       'economy': await economyService.exportdb(),
-      'sport': sportService.exportdb(),
+      'sport': await sportService.exportdb(),
       'tasks': await taskService.exportdb(),
       'timer': timerService.exportdb(),
+      'style': await styleService.exportdb(),
     };
   }
 
@@ -287,4 +298,19 @@ class CoreService {
       );
 
   Future<SportModels> getSport({FilterRequestModel? filter}) async => sportService.get(coreModel: coreModel, filter: filter);
+
+  //  Style
+  Future<bool> deleteStyle({required int id}) async => styleService.delete(coreModel: coreModel, id: id);
+
+  Future<Future<bool>> addStyle({
+    required String icon,
+    required String color,
+  }) async =>
+      styleService.add(
+        coreModel: coreModel,
+        icon: icon,
+        color: color,
+      );
+
+  Future<Styles> getStyles() async => styleService.get(coreModel: coreModel);
 }

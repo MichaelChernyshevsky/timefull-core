@@ -34,7 +34,7 @@ class TimerService extends ChangeNotifier implements Repository {
   TimerState timerState = TimerState.stop;
   Timer? timer;
 
-  CollectionSchema get shemaTimer => TimerModelSchema;
+  CollectionSchema get shema => TimerModelSchema;
 
   StreamController<Connector> timeModel = StreamController<Connector>.broadcast();
 

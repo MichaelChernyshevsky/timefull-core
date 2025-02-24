@@ -24,7 +24,7 @@ void main() {
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open(
-      [service.shemaUser],
+      [service.shema],
       directory: await testDirectory,
     );
     service.initialize(coreModel: coreModelWithout, isar: isar);

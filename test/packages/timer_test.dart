@@ -16,7 +16,7 @@ void main() {
     timerRepo = TimerService(httpService: httpService);
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open(
-      [timerRepo.shemaTimer],
+      [timerRepo.shema],
       directory: await testDirectory,
     );
   });

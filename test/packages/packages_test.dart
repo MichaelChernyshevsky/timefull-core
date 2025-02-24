@@ -19,7 +19,7 @@ void main() {
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open(
-      [packagesService.shemaPackages],
+      [packagesService.shema],
       directory: await testDirectory,
     );
   });

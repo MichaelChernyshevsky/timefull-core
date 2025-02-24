@@ -4,7 +4,7 @@ class UserService extends Repository {
   UserService({required super.httpService});
   UserModel? user;
   String? _userId;
-  CollectionSchema get shemaUser => UserModelSchema;
+  CollectionSchema get shema => UserModelSchema;
   late UserRepository repository;
 
   Future<void> initialize({required CoreModel coreModel, required Isar isar}) async {

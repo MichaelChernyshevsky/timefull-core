@@ -12,7 +12,7 @@ class PackagesService extends Repository implements PackagesInterface {
 
   PackagesService({required super.httpService}) : repository = PackagesRepository(httpService: httpService);
 
-  CollectionSchema get shemaPackages => PackagesSchema;
+  CollectionSchema get shema => PackagesSchema;
   late Isar _isar;
   Packages? packages;
 

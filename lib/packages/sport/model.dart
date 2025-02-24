@@ -20,7 +20,6 @@ class SportModel {
     required this.userId,
   });
 
-  // Метод для преобразования из JSON в объект SportModel
   factory SportModel.fromJson(Map<String, dynamic> json) {
     return SportModel(
       date: json['date'],
@@ -31,7 +30,6 @@ class SportModel {
     );
   }
 
-  // Метод для преобразования объекта SportModel в JSON
   Map<String, dynamic> toJson() {
     return {
       'date': date,

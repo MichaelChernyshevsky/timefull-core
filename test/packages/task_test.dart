@@ -13,7 +13,7 @@ void main() {
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open(
-      [taskRepo.shemaTask],
+      [taskRepo.shema],
       directory: await testDirectory,
     );
   });

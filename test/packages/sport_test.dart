@@ -15,7 +15,7 @@ void main() {
 
     await Isar.initializeIsarCore(download: true);
     isar = await Isar.open(
-      [service.shemaSport],
+      [service.shema],
       directory: await testDirectory,
     );
   });
@@ -27,6 +27,7 @@ void main() {
   group('Sport without api:', () {
     test("  initialize", () async => service.initialize(coreModel: coreModelWithout, isar: isar));
     late SportModels models;
+    late Map<String, dynamic> db;
 
     test("  add", () async {
       final isAdd = await service.add(
@@ -43,10 +44,20 @@ void main() {
       models = await service.get(coreModel: coreModelWithout, filter: filter);
     });
 
+    test("  export", () async {
+      db = await service.exportdb();
+    });
+
     test("  delete", () async {
       await service.delete(coreModel: coreModelWithout, id: models[0].id!);
       final models_2 = await service.get(coreModel: coreModelWithout, filter: filter);
       expect(models_2.length != models.length, true);
+    });
+
+    test("  import", () async {
+      await service.importdb(db);
+      models = await service.get(coreModel: coreModelWithout);
+      expect(models.isNotEmpty, true);
     });
   });
 

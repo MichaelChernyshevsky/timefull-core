@@ -8,7 +8,7 @@ import 'package:timefullcore/packages/sport/repository.dart';
 class SportService extends Repository {
   final SportRepository repository;
   late Isar _isar;
-  CollectionSchema get shemaSport => SportModelSchema;
+  CollectionSchema get shema => SportModelSchema;
 
   SportService({required super.httpService}) : repository = SportRepository(httpService: httpService);
 
@@ -16,28 +16,58 @@ class SportService extends Repository {
     _isar = isar;
   }
 
-  void importdb(Map<String, dynamic> db) {}
+  Future<void> importdb(Map<String, dynamic> db) async {
+    await _isar.writeTxn(() async => await _isar.sportModels.where().deleteAll());
+    for (final key in db.keys) {
+      await add(
+        userId: db[key]["userId"],
+        id: db[key]["id"],
+        title: db[key]["title"],
+        distant: db[key]["distant"],
+        date: db[key]["date"],
+      );
+    }
+  }
 
-  Map<String, dynamic> exportdb() {
-    return {
-      'economy': {},
-      'sport': {},
-      'notes': {},
-      'tasks': {},
-      'timer': {},
-    };
+  Future<Map<String, dynamic>> exportdb() async {
+    final SportModels models = await get(
+      coreModel: CoreModel(loggined: false, internet: false, userId: '', isWeb: false),
+      filter: null,
+    );
+
+    Map<String, dynamic> db = {};
+
+    for (final model in models) {
+      db[model.id.toString()] = {
+        'date': model.date,
+        'distant': model.distant,
+        'id': model.id,
+        'title': model.title,
+        'userId': model.userId,
+      };
+    }
+
+    return db;
   }
 
   Future<bool> add({
     required String title,
     required int distant,
     required String date,
-    required CoreModel coreModel,
+    CoreModel? coreModel,
+    String? userId,
+    int? id,
   }) async {
-    if (coreModel.internet && coreModel.loggined) {
+    if (coreModel != null && coreModel.internet && coreModel.loggined) {
       final resp = await repository.add(userId: coreModel.userId, title: title, distant: distant, date: date);
     }
-    await _isar.writeTxn(() async => _isar.sportModels.put(SportModel(date: date, distant: distant, id: DateTime.now().millisecondsSinceEpoch, title: title, userId: coreModel.userId)));
+    await _isar.writeTxn(() async => _isar.sportModels.put(SportModel(
+          date: date,
+          distant: distant,
+          id: id ?? DateTime.now().millisecondsSinceEpoch,
+          title: title,
+          userId: userId ?? coreModel!.userId,
+        )));
     return true;
   }
 
@@ -46,7 +76,7 @@ class SportService extends Repository {
     return true;
   }
 
-  Future<SportModels> get({required CoreModel coreModel, required FilterRequestModel? filter}) async {
+  Future<SportModels> get({required CoreModel coreModel, FilterRequestModel? filter}) async {
     final models = await _isar.sportModels.where().findAll();
     return models;
   }
